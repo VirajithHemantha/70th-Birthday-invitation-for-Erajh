@@ -113,10 +113,12 @@ function FlipCard({
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
         className={`w-full h-full transform-style-3d relative ${className || ""}`}
+        style={{ WebkitTransformStyle: "preserve-3d" }}
       >
         {/* Front */}
         <div
-          className={`absolute inset-0 backface-hidden w-full h-full ${rounded} overflow-hidden shadow-2xl border border-white/40 ring-1 ring-black/5`}
+          className={`absolute inset-0 backface-hidden flip-face w-full h-full ${rounded} overflow-hidden shadow-2xl border border-white/40 ring-1 ring-black/5`}
+          style={{ transform: "rotateY(0deg) translateZ(1px)", WebkitTransform: "rotateY(0deg) translateZ(1px)" }}
         >
           {front}
           <div className="absolute top-3 left-3 w-6 h-6 border-t border-l border-white/30 rounded-tl-lg" />
@@ -125,13 +127,13 @@ function FlipCard({
 
         {/* Back */}
         <div
-          style={{ transform: "rotateY(180deg)" }}
-          className={`absolute inset-0 backface-hidden w-full h-full bg-paper/95 backdrop-blur-xl border border-sage/20 ${rounded} flex flex-col justify-center items-center text-center p-3 md:p-8 shadow-2xl overflow-y-auto overflow-x-hidden`}
+          style={{ transform: "rotateY(180deg) translateZ(1px)", WebkitTransform: "rotateY(180deg) translateZ(1px)" }}
+          className={`absolute inset-0 backface-hidden flip-face w-full h-full bg-paper border border-sage/20 ${rounded} flex flex-col justify-center items-center text-center p-3 md:p-8 shadow-2xl overflow-hidden`}
         >
           <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')] pointer-events-none" />
           <div className="absolute top-5 left-5 w-10 h-10 border-t-2 border-l-2 border-sage/10 rounded-tl-xl" />
           <div className="absolute bottom-5 right-5 w-10 h-10 border-b-2 border-r-2 border-sage/10 rounded-br-xl" />
-          <div className="relative z-10 w-full h-full flex flex-col py-4">{back}</div>
+          <div className="relative z-10 w-full h-full flex flex-col py-4 overflow-y-auto overflow-x-hidden ios-scroll">{back}</div>
         </div>
       </motion.div>
 
@@ -210,7 +212,8 @@ export default function App() {
   const [isOpened, setIsOpened] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [hearts, setHearts] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -223,19 +226,33 @@ export default function App() {
     const mediaQuery = window.matchMedia("(max-width: 640px)");
     const updateSize = () => setIsSmallScreen(mediaQuery.matches);
     updateSize();
-    mediaQuery.addEventListener("change", updateSize);
-    return () => mediaQuery.removeEventListener("change", updateSize);
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", updateSize);
+      return () => mediaQuery.removeEventListener("change", updateSize);
+    }
+
+    // iOS Safari < 14
+    mediaQuery.addListener(updateSize);
+    return () => mediaQuery.removeListener(updateSize);
   }, []);
 
-  const addHeart = (e: React.MouseEvent | React.TouchEvent) => {
-    const x = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const y = "touches" in e ? e.touches[0].clientY : e.clientY;
-    const id = Date.now();
-    setHearts((prev) => [...prev, { id, x, y }]);
-    setTimeout(() => {
-      setHearts((prev) => prev.filter((h) => h.id !== id));
-    }, 1000);
-  };
+  useEffect(() => {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotion = () => setPrefersReducedMotion(motionQuery.matches);
+    updateMotion();
+    if (typeof motionQuery.addEventListener === "function") {
+      motionQuery.addEventListener("change", updateMotion);
+      return () => motionQuery.removeEventListener("change", updateMotion);
+    }
+    motionQuery.addListener(updateMotion);
+    return () => motionQuery.removeListener(updateMotion);
+  }, []);
+
+  const isIOS =
+    typeof navigator !== "undefined" &&
+    (/iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && (navigator as any).maxTouchPoints > 1));
+
+  const reduceEffects = prefersReducedMotion || isIOS;
 
   const handleOpen = () => {
     setIsFlapOpen(true);
@@ -245,12 +262,31 @@ export default function App() {
     }, 1200);
   };
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.muted = isMuted;
+
+    if (isMuted) {
+      audio.pause();
+      return;
+    }
+
+    const playPromise = audio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        // iOS/Safari may block playback until a user gesture; the button tap will retry.
+      });
+    }
+  }, [isMuted]);
+
   return (
     <div
       className="min-h-screen bg-paper text-zinc-800 selection:bg-sage/20 overflow-x-hidden relative"
-      onMouseDown={addHeart}
-      onTouchStart={addHeart}
     >
+      <audio ref={audioRef} src="/song.mp3" loop preload="auto" />
+
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-sage origin-left z-[1000]" style={{ scaleX }} />
 
       <motion.button
@@ -258,26 +294,11 @@ export default function App() {
         animate={{ opacity: 1, scale: 1 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => setIsMuted(!isMuted)}
+        onClick={() => setIsMuted((m) => !m)}
         className="fixed bottom-6 right-6 z-[500] w-12 h-12 rounded-full bg-sage text-white shadow-2xl flex items-center justify-center backdrop-blur-md border border-white/20"
       >
         {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} className="animate-pulse" />}
       </motion.button>
-
-      <AnimatePresence>
-        {hearts.map((heart) => (
-          <motion.div
-            key={heart.id}
-            initial={{ opacity: 1, scale: 0, y: 0, x: -10 }}
-            animate={{ opacity: 0, scale: 1.5, y: -100, x: (Math.random() - 0.5) * 100 }}
-            exit={{ opacity: 0 }}
-            className="fixed pointer-events-none z-[999] text-sage/40"
-            style={{ left: heart.x, top: heart.y }}
-          >
-            <Heart fill="currentColor" size={Math.random() * 20 + 10} />
-          </motion.div>
-        ))}
-      </AnimatePresence>
 
       <AnimatePresence>
         {!isOpened && (
@@ -300,24 +321,28 @@ export default function App() {
               </p>
             </motion.div>
 
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[90vw] md:h-[90vw] rounded-full border-2 border-sage/10 border-dashed pointer-events-none z-0 opacity-50"
-            />
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 180, repeat: Infinity, ease: "linear" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] md:w-[70vw] md:h-[70vw] rounded-full border border-sage/10 pointer-events-none z-0 opacity-40 flex items-center justify-center p-8"
-            >
-              <div className="w-full h-full rounded-full border-[0.5px] border-sage/5" />
-            </motion.div>
+            {!reduceEffects && (
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[90vw] md:h-[90vw] rounded-full border-2 border-sage/10 border-dashed pointer-events-none z-0 opacity-50"
+                />
+                <motion.div
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 180, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] md:w-[70vw] md:h-[70vw] rounded-full border border-sage/10 pointer-events-none z-0 opacity-40 flex items-center justify-center p-8"
+                >
+                  <div className="w-full h-full rounded-full border-[0.5px] border-sage/5" />
+                </motion.div>
 
-            <motion.div
-              animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute w-[80vw] md:w-[600px] h-[80vw] md:h-[600px] bg-sage/20 rounded-full blur-[80px] md:blur-[120px] pointer-events-none z-0"
-            />
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute w-[80vw] md:w-[600px] h-[80vw] md:h-[600px] bg-sage/20 rounded-full blur-[80px] md:blur-[120px] pointer-events-none z-0"
+                />
+              </>
+            )}
 
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
               <motion.div
@@ -339,107 +364,114 @@ export default function App() {
                 className="absolute -bottom-[30%] -right-[20%] w-[140%] h-[140%] rounded-full bg-[radial-gradient(circle,rgba(156,132,112,0.4)_0%,transparent_60%)] blur-3xl"
               />
 
-              {[...Array(40)].map((_, i) => (
-                <motion.div
-                  key={`dust-${i}`}
-                  className="absolute pointer-events-none"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                  }}
-                  animate={{
-                    y: [0, -Math.random() * 500 - 300],
-                    x: [0, (Math.random() - 0.5) * 200],
-                    rotate: [0, Math.random() * 360],
-                    opacity: [0, Math.random() * 0.5 + 0.2, 0],
-                    scale: [0.5, Math.random() * 1 + 0.5, 0.5],
-                  }}
-                  transition={{
-                    duration: 10 + Math.random() * 20,
-                    repeat: Infinity,
-                    delay: Math.random() * 10,
-                    ease: "easeInOut",
-                  }}
-                >
-                  {i % 4 === 0 ? (
-                    <Flower2 className="text-sage/20 w-4 h-4 md:w-6 md:h-6" />
-                  ) : (
-                    <div
-                      className="rounded-full shadow-[0_0_15px_rgba(196,113,74,0.4)]"
-                      style={{
-                        backgroundColor: i % 2 === 0 ? "#C4714A" : "#A84C2C",
-                        width: Math.random() * 6 + 2 + "px",
-                        height: Math.random() * 6 + 2 + "px",
-                        filter: `blur(${Math.random() * 1}px)`,
-                      }}
-                    />
-                  )}
-                </motion.div>
-              ))}
-
-              {[...Array(20)].map((_, i) => {
-                const isHeart = i % 2 === 0;
-                const size = isHeart ? Math.random() * 20 + 10 : Math.random() * 25 + 15;
-                return (
+              {!reduceEffects &&
+                [...Array(40)].map((_, i) => (
                   <motion.div
-                    key={`loading-falling-${i}`}
-                    className="absolute pointer-events-none z-10"
-                    initial={{ top: "-10%", left: `${Math.random() * 100}%`, rotate: 0, opacity: 0 }}
+                    key={`dust-${i}`}
+                    className="absolute pointer-events-none"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                    }}
                     animate={{
-                      top: "110%",
-                      left: [
-                        `${Math.random() * 100}%`,
-                        `${Math.random() * 100 + (Math.random() - 0.5) * 20}%`,
-                        `${Math.random() * 100}%`,
-                      ],
-                      rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
-                      opacity: [0, 0.6, 0],
+                      y: [0, -Math.random() * 500 - 300],
+                      x: [0, (Math.random() - 0.5) * 200],
+                      rotate: [0, Math.random() * 360],
+                      opacity: [0, Math.random() * 0.5 + 0.2, 0],
+                      scale: [0.5, Math.random() * 1 + 0.5, 0.5],
                     }}
                     transition={{
-                      duration: 15 + Math.random() * 15,
+                      duration: 10 + Math.random() * 20,
                       repeat: Infinity,
                       delay: Math.random() * 10,
-                      ease: "linear",
+                      ease: "easeInOut",
                     }}
                   >
-                    {isHeart ? <Heart className="text-sage" fill="currentColor" size={size} /> : <RealisticPetal size={size} />}
+                    {i % 4 === 0 ? (
+                      <Flower2 className="text-sage/20 w-4 h-4 md:w-6 md:h-6" />
+                    ) : (
+                      <div
+                        className="rounded-full shadow-[0_0_15px_rgba(196,113,74,0.4)]"
+                        style={{
+                          backgroundColor: i % 2 === 0 ? "#C4714A" : "#A84C2C",
+                          width: Math.random() * 6 + 2 + "px",
+                          height: Math.random() * 6 + 2 + "px",
+                          filter: `blur(${Math.random() * 1}px)`,
+                        }}
+                      />
+                    )}
                   </motion.div>
-                );
-              })}
+                ))}
 
-              {[...Array(12)].map((_, i) => (
-                <motion.div
-                  key={`bokeh-${i}`}
-                  className="absolute rounded-full mix-blend-soft-light"
-                  style={{
-                    backgroundColor: i % 2 === 0 ? "#9C8470" : "#F5EFE0",
-                    opacity: 0.3,
-                    width: Math.random() * 150 + 100 + "px",
-                    height: Math.random() * 150 + 100 + "px",
-                    left: `${Math.random() * 100}%`,
-                    bottom: `-20%`,
-                    filter: `blur(${Math.random() * 20 + 30}px)`,
-                  }}
-                  animate={{
-                    y: [0, -1200],
-                    x: [(Math.random() - 0.5) * 400, (Math.random() - 0.5) * 400],
-                    opacity: [0, 0.4, 0],
-                  }}
-                  transition={{
-                    duration: 25 + Math.random() * 35,
-                    repeat: Infinity,
-                    delay: Math.random() * 20,
-                    ease: "linear",
-                  }}
-                />
-              ))}
+              {!reduceEffects &&
+                [...Array(20)].map((_, i) => {
+                  const isHeart = i % 2 === 0;
+                  const size = isHeart ? Math.random() * 20 + 10 : Math.random() * 25 + 15;
+                  return (
+                    <motion.div
+                      key={`loading-falling-${i}`}
+                      className="absolute pointer-events-none z-10"
+                      initial={{ top: "-10%", left: `${Math.random() * 100}%`, rotate: 0, opacity: 0 }}
+                      animate={{
+                        top: "110%",
+                        left: [
+                          `${Math.random() * 100}%`,
+                          `${Math.random() * 100 + (Math.random() - 0.5) * 20}%`,
+                          `${Math.random() * 100}%`,
+                        ],
+                        rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
+                        opacity: [0, 0.6, 0],
+                      }}
+                      transition={{
+                        duration: 15 + Math.random() * 15,
+                        repeat: Infinity,
+                        delay: Math.random() * 10,
+                        ease: "linear",
+                      }}
+                    >
+                      {isHeart ? (
+                        <Heart className="text-sage" fill="currentColor" size={size} />
+                      ) : (
+                        <RealisticPetal size={size} />
+                      )}
+                    </motion.div>
+                  );
+                })}
+
+              {!reduceEffects &&
+                [...Array(12)].map((_, i) => (
+                  <motion.div
+                    key={`bokeh-${i}`}
+                    className="absolute rounded-full mix-blend-soft-light"
+                    style={{
+                      backgroundColor: i % 2 === 0 ? "#9C8470" : "#F5EFE0",
+                      opacity: 0.3,
+                      width: Math.random() * 150 + 100 + "px",
+                      height: Math.random() * 150 + 100 + "px",
+                      left: `${Math.random() * 100}%`,
+                      bottom: `-20%`,
+                      filter: `blur(${Math.random() * 20 + 30}px)`,
+                    }}
+                    animate={{
+                      y: [0, -1200],
+                      x: [(Math.random() - 0.5) * 400, (Math.random() - 0.5) * 400],
+                      opacity: [0, 0.4, 0],
+                    }}
+                    transition={{
+                      duration: 25 + Math.random() * 35,
+                      repeat: Infinity,
+                      delay: Math.random() * 20,
+                      ease: "linear",
+                    }}
+                  />
+                ))}
             </div>
 
             <motion.div
               layoutId="envelope-box"
               style={{ perspective: 1500 }}
-              animate={!isFlapOpen ? { y: [0, -10, 0] } : {}}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              animate={!reduceEffects && !isFlapOpen ? { y: [0, -10, 0] } : {}}
+              transition={!reduceEffects ? { duration: 4, repeat: Infinity, ease: "easeInOut" } : { duration: 0 }}
               className="relative w-full max-w-2xl h-80 md:h-[450px] rounded-[2.25rem] shadow-[0_34px_80px_-22px_rgba(0,0,0,0.55)] flex flex-col items-center justify-center z-10 overflow-hidden"
             >
               {/* premium envelope material */}
@@ -448,11 +480,13 @@ export default function App() {
               <div className="absolute inset-0 bg-gradient-to-br from-white/16 via-transparent to-black/30 pointer-events-none" />
               <div className="absolute inset-[10px] rounded-[1.8rem] border border-white/18 pointer-events-none" />
               <div className="absolute inset-[16px] rounded-[1.55rem] border border-black/10 pointer-events-none" />
-              <motion.div
-                animate={{ opacity: [0.18, 0.32, 0.18], scale: [1, 1.04, 1] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-20 left-1/2 -translate-x-1/2 w-[520px] h-[260px] bg-paper/15 blur-3xl rounded-full pointer-events-none"
-              />
+              {!reduceEffects && (
+                <motion.div
+                  animate={{ opacity: [0.18, 0.32, 0.18], scale: [1, 1.04, 1] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -top-20 left-1/2 -translate-x-1/2 w-[520px] h-[260px] bg-paper/15 blur-3xl rounded-full pointer-events-none"
+                />
+              )}
 
               <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 md:space-y-6">
                 <span className="serif text-white/50 text-lg md:text-3xl tracking-[0.4em] md:tracking-[0.6em] uppercase text-center px-4">
@@ -487,7 +521,7 @@ export default function App() {
                 >
                   <motion.div
                     animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                    transition={!reduceEffects ? { repeat: Infinity, duration: 3, ease: "easeInOut" } : { duration: 0 }}
                     className="flex flex-col items-center gap-4 mt-8 md:mt-12 group"
                   >
                     <div className="w-24 h-24 md:w-32 md:h-32 rounded-full shadow-[0_18px_50px_-18px_rgba(0,0,0,0.65)] flex items-center justify-center relative group-hover:scale-105 transition-transform duration-500 bg-paper/10 border border-white/30 p-1.5 backdrop-blur-md">
@@ -499,7 +533,10 @@ export default function App() {
                       </div>
                     </div>
 
-                    <motion.div animate={{ y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}>
+                    <motion.div
+                      animate={!reduceEffects ? { y: [0, 5, 0] } : { y: 0 }}
+                      transition={!reduceEffects ? { repeat: Infinity, duration: 2, ease: "easeInOut" } : { duration: 0 }}
+                    >
                       <p className="serif text-white/75 tracking-[0.32em] uppercase text-[10px] md:text-xs whitespace-nowrap">
                         Tap to break seal
                       </p>
@@ -513,7 +550,7 @@ export default function App() {
       </AnimatePresence>
 
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <img src="/background.png" alt="Background" className="w-full h-full object-cover opacity-[0.35] md:opacity-[0.45]" />
+        <img src="/background1.png" alt="Background" className="w-full h-full object-cover opacity-[0.35] md:opacity-[0.45]" />
         <div className="absolute inset-0 bg-gradient-to-b from-paper/40 via-transparent to-paper/40" />
       </div>
 
@@ -1160,8 +1197,8 @@ export default function App() {
                         <div className="absolute top-0 -left-[3px] w-2 h-2 rounded-full bg-sage" />
                       </div>
                       <div>
-                        <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Ceremony</p>
-                        <p className="serif text-[10px] md:text-xs italic text-zinc-500">Exchange of Vows</p>
+                        <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Nikkah Ceremony</p>
+                        <p className="serif text-[10px] md:text-xs italic text-zinc-500">Wedding Ceremony</p>
                       </div>
                     </div>
 
@@ -1171,19 +1208,30 @@ export default function App() {
                         <div className="absolute top-0 -left-[3px] w-2 h-2 rounded-full bg-sage" />
                       </div>
                       <div className="-mt-1">
-                        <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Cocktails</p>
-                        <p className="serif text-[10px] md:text-xs italic text-zinc-500">Drinks & Photos</p>
+                        <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Couple Arrival</p>
+                        <p className="serif text-[10px] md:text-xs italic text-zinc-500">Grand Entrance</p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-2 md:gap-4">
-                      <span className="serif text-sage font-bold text-[10px] md:text-base w-12 md:w-20 text-right shrink-0 pt-1">8:30 PM</span>
+                      <span className="serif text-sage font-bold text-[10px] md:text-base w-12 md:w-20 text-right shrink-0 pt-1">8:00 PM</span>
                       <div className="w-px h-full bg-transparent relative mt-2 -ml-[1px] md:-ml-2 shrink-0">
                         <div className="absolute top-0 -left-[3px] w-2 h-2 rounded-full bg-sage" />
                       </div>
                       <div>
-                        <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Reception</p>
-                        <p className="serif text-[10px] md:text-xs italic text-zinc-500">Dinner & Dancing</p>
+                        <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Dinner</p>
+                        <p className="serif text-[10px] md:text-xs italic text-zinc-500">Dinner Service</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2 md:gap-4">
+                      <span className="serif text-sage font-bold text-[10px] md:text-base w-12 md:w-20 text-right shrink-0 pt-1">9:00 PM</span>
+                      <div className="w-px h-full bg-transparent relative mt-2 -ml-[1px] md:-ml-2 shrink-0">
+                        <div className="absolute top-0 -left-[3px] w-2 h-2 rounded-full bg-sage" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Dance Floor</p>
+                        <p className="serif text-[10px] md:text-xs italic text-zinc-500">Dancing Begins</p>
                       </div>
                     </div>
                   </div>
@@ -1192,49 +1240,6 @@ export default function App() {
             />
           </motion.div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-16 md:mt-32 space-y-12 md:space-y-20 p-8 md:p-16 bg-white/40 backdrop-blur-md rounded-[3rem] border border-white shadow-xl relative overflow-hidden"
-        >
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-sage/20 to-transparent" />
-
-          <div className="text-center space-y-4">
-            <Heart className="text-sage/40 w-8 h-8 mx-auto" fill="currentColor" />
-            <h2 className="serif text-4xl md:text-7xl text-sage font-light italic">Our Story</h2>
-            <p className="text-xs uppercase tracking-[0.4em] text-zinc-400 font-bold">The Journey of Us</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
-            {[
-              { year: "2020", title: "First Met", desc: "A chance encounter that changed everything.", icon: <Heart className="w-5 h-5" /> },
-              { year: "2022", title: "The Proposal", desc: "Underneath the stars, she said yes!", icon: <Heart className="w-5 h-5" /> },
-              { year: "2026", title: "The Big Day", desc: "Beginning our forever, together.", icon: <Heart className="w-5 h-5" /> },
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.2 }}
-                className="text-center space-y-4 relative group"
-              >
-                <div className="w-12 h-12 rounded-full bg-sage/10 text-sage mx-auto flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                  {item.icon}
-                </div>
-                <div className="space-y-2">
-                  <span className="serif text-2xl text-sage/60 italic">{item.year}</span>
-                  <h4 className="serif text-2xl text-zinc-800 font-medium tracking-wide">{item.title}</h4>
-                  <p className="serif text-sm italic text-zinc-500 leading-relaxed max-w-[200px] mx-auto">{item.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-sage/5 rounded-full blur-3xl -mb-32 -mr-32" />
-        </motion.div>
 
         <motion.footer
           initial={{ opacity: 0 }}
@@ -1254,60 +1259,7 @@ export default function App() {
         </motion.footer>
       </motion.main>
 
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[1] overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(164,178,165,0.1)_0%,transparent_70%)]" />
-
-        <motion.div
-          animate={{ x: [0, 100, 0], y: [0, 50, 0], rotate: [0, 45, 0], scale: [1, 1.2, 1] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[10%] -left-[10%] w-[60rem] h-[60rem] bg-sage/5 rounded-full blur-[140px]"
-        />
-        <motion.div
-          animate={{ x: [0, -80, 0], y: [0, 100, 0], rotate: [0, -30, 0], scale: [1, 1.1, 1] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-[15%] -right-[15%] w-[70rem] h-[70rem] bg-sage/10 rounded-full blur-[160px]"
-        />
-
-        {[...Array(30)].map((_, i) => {
-          const isHeart = i % 2 === 0;
-          const randomDelay = Math.random() * 20;
-          const randomDuration = 15 + Math.random() * 20;
-          const size = isHeart ? Math.random() * 15 + 10 : Math.random() * 24 + 16;
-
-          return (
-            <motion.div
-              key={`falling-decor-${i}`}
-              className="absolute pointer-events-none blur-[1px] md:blur-none"
-              initial={{
-                top: "-10%",
-                left: `${Math.random() * 100}%`,
-                rotate: 0,
-                scale: 0.5,
-                opacity: 0,
-              }}
-              animate={{
-                top: "110%",
-                left: [
-                  `${Math.random() * 100}%`,
-                  `${Math.random() * 100 + (Math.random() - 0.5) * 20}%`,
-                  `${Math.random() * 100}%`,
-                ],
-                rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
-                scale: [0.5, 1, 0.8],
-                opacity: [0, 0.4, 0],
-              }}
-              transition={{
-                duration: randomDuration,
-                repeat: Infinity,
-                delay: randomDelay,
-                ease: "linear",
-              }}
-            >
-              {isHeart ? <Heart className="text-sage" fill="currentColor" size={size} /> : <RealisticPetal size={size} />}
-            </motion.div>
-          );
-        })}
-      </div>
+      {/* Heavy background motion removed for iOS stability */}
     </div>
   );
 }

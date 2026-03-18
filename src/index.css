@@ -60,11 +60,33 @@ body {
 
 .transform-style-3d {
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .backface-hidden {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Safari/iOS: prevent mirrored text bleeding through during 3D flips */
+.flip-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  -webkit-font-smoothing: antialiased;
+  will-change: transform;
+}
+
+.flip-face * {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.ios-scroll {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Custom scrollbar for premium feel */
