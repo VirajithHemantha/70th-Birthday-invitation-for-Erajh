@@ -16,7 +16,7 @@
 
 ## RSVP -> Google Sheets
 
-This app submits RSVP entries to Google Sheets via a Google Apps Script Web App.
+This app submits RSVP entries to Google Sheets via a Google Apps Script Web App..
 
 ### 1) Create Apps Script endpoint
 
