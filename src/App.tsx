@@ -84,7 +84,10 @@ function FlipCard({
     setIsFlipped(false);
   }
 
-  function handleClick() {
+  function handleClick(event: React.MouseEvent<HTMLDivElement>) {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest("[data-no-flip]")) return;
+
     setIsFlipped((prev) => !prev);
     if (!globalDiscovered) {
       setShowHint(false);
@@ -204,6 +207,241 @@ function RealisticPetal({ size = 20, className = "" }: { size?: number; classNam
         />
       </svg>
     </motion.div>
+  );
+}
+
+type Attendance = "yes" | "no";
+type PartyType = "individual" | "family";
+type MealPreference = "veg" | "non-veg";
+
+type GuestEntry = {
+  name: string;
+  meal: MealPreference;
+};
+
+function RSVPForm() {
+  const endpoint = (import.meta as any).env?.VITE_RSVP_ENDPOINT as string | undefined;
+
+  const [attendance, setAttendance] = useState<Attendance>("yes");
+  const [partyType, setPartyType] = useState<PartyType>("individual");
+  const [guestCount, setGuestCount] = useState<number>(1);
+  const [guests, setGuests] = useState<GuestEntry[]>([{ name: "", meal: "non-veg" }]);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const isAttending = attendance === "yes";
+  const effectiveGuestCount = partyType === "family" ? Math.max(2, guestCount) : 1;
+
+  useEffect(() => {
+    if (partyType === "individual") {
+      setGuestCount(1);
+      setGuests((prev) => [prev[0] ?? { name: "", meal: "non-veg" }]);
+      return;
+    }
+
+    setGuestCount((c) => (c < 2 ? 2 : c));
+  }, [partyType]);
+
+  useEffect(() => {
+    const desiredCount = partyType === "family" ? Math.max(2, guestCount) : 1;
+    setGuests((prev) => {
+      if (prev.length === desiredCount) return prev;
+      const next = prev.slice(0, desiredCount);
+      while (next.length < desiredCount) next.push({ name: "", meal: "non-veg" });
+      return next;
+    });
+  }, [guestCount, partyType]);
+
+  function updateGuest(index: number, patch: Partial<GuestEntry>) {
+    setGuests((prev) => prev.map((g, i) => (i === index ? { ...g, ...patch } : g)));
+  }
+
+  function validate(): string | null {
+    const primaryName = guests[0]?.name?.trim();
+    if (!primaryName) return "Please enter your name.";
+    if (attendance === "no") return null;
+
+    const missingName = guests.some((g) => !g.name.trim());
+    if (missingName) return "Please enter all guest names.";
+
+    return null;
+  }
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setSuccessMessage(null);
+    setErrorMessage(null);
+
+    const validationError = validate();
+    if (validationError) {
+      setErrorMessage(validationError);
+      return;
+    }
+
+    if (!endpoint) {
+      setErrorMessage("RSVP saving is not configured yet (missing VITE_RSVP_ENDPOINT).");
+      return;
+    }
+
+    const payload = {
+      attendance,
+      partyType,
+      guestCount: isAttending ? effectiveGuestCount : 0,
+      guests: isAttending ? guests : [guests[0]],
+      submittedAt: new Date().toISOString(),
+    };
+
+    setSubmitting(true);
+    try {
+      // Try JSON request first (works if endpoint supports CORS).
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      setSuccessMessage("RSVP saved. Thank you!");
+    } catch {
+      try {
+        // Fallback for Apps Script deployments without CORS.
+        const fd = new FormData();
+        fd.append("payload", JSON.stringify(payload));
+        await fetch(endpoint, { method: "POST", mode: "no-cors", body: fd });
+        setSuccessMessage("RSVP submitted. Thank you!");
+      } catch {
+        setErrorMessage("Could not submit RSVP. Please try again.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div data-no-flip className="w-full cursor-auto">
+      <CheckCircle2 size={24} className="text-sage mb-2 md:mb-4 mx-auto opacity-70 md:w-8 md:h-8" />
+      <h4 className="serif text-xl md:text-3xl text-sage mb-2 md:mb-3 text-center">RSVP</h4>
+      <p className="text-[8px] md:text-xs text-zinc-500 uppercase tracking-widest mb-4 md:mb-6 text-center">
+        Please let us know by
+        <br />
+        May 1st, 2026
+      </p>
+
+      <form onSubmit={submit} className="space-y-3 md:space-y-4 px-1 md:px-2">
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            data-no-flip
+            onClick={() => setAttendance("yes")}
+            className={`py-2 md:py-2.5 rounded-xl text-[9px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${
+              attendance === "yes" ? "bg-sage text-white border-sage" : "bg-white/40 text-sage border-sage/30"
+            }`}
+          >
+            Attending
+          </button>
+          <button
+            type="button"
+            data-no-flip
+            onClick={() => setAttendance("no")}
+            className={`py-2 md:py-2.5 rounded-xl text-[9px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${
+              attendance === "no" ? "bg-zinc-800 text-white border-zinc-800" : "bg-white/40 text-zinc-700 border-zinc-300/60"
+            }`}
+          >
+            Not Attending
+          </button>
+        </div>
+
+        <div className={`grid grid-cols-2 gap-2 ${!isAttending ? "opacity-60 pointer-events-none" : ""}`}>
+          <button
+            type="button"
+            data-no-flip
+            onClick={() => setPartyType("individual")}
+            className={`py-2 rounded-xl text-[9px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${
+              partyType === "individual" ? "bg-sage/90 text-white border-sage" : "bg-white/40 text-sage border-sage/30"
+            }`}
+          >
+            Individual
+          </button>
+          <button
+            type="button"
+            data-no-flip
+            onClick={() => setPartyType("family")}
+            className={`py-2 rounded-xl text-[9px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${
+              partyType === "family" ? "bg-sage/90 text-white border-sage" : "bg-white/40 text-sage border-sage/30"
+            }`}
+          >
+            Family
+          </button>
+        </div>
+
+        {isAttending && partyType === "family" && (
+          <div className="flex items-center justify-between gap-3">
+            <label className="text-[9px] md:text-xs uppercase tracking-widest font-bold text-zinc-600">Family Count</label>
+            <input
+              data-no-flip
+              type="number"
+              min={2}
+              max={12}
+              value={effectiveGuestCount}
+              onChange={(ev) => setGuestCount(Number(ev.target.value || 2))}
+              className="w-24 rounded-xl border border-sage/20 bg-white/60 px-3 py-2 text-[10px] md:text-xs text-zinc-700 outline-none"
+            />
+          </div>
+        )}
+
+        <div className="space-y-2">
+          {(isAttending ? guests : [guests[0]]).map((guest, idx) => (
+            <div key={idx} className="grid grid-cols-1 md:grid-cols-[1fr_140px] gap-2">
+              <input
+                data-no-flip
+                value={guest?.name ?? ""}
+                onChange={(ev) => updateGuest(idx, { name: ev.target.value })}
+                placeholder={
+                  isAttending
+                    ? partyType === "family"
+                      ? `Guest ${idx + 1} name`
+                      : "Your name"
+                    : "Your name"
+                }
+                className="w-full rounded-xl border border-sage/20 bg-white/60 px-3 py-2 text-[10px] md:text-xs text-zinc-700 outline-none"
+              />
+
+              <select
+                data-no-flip
+                disabled={!isAttending}
+                value={guest?.meal ?? "non-veg"}
+                onChange={(ev) => updateGuest(idx, { meal: ev.target.value as MealPreference })}
+                className={`w-full rounded-xl border border-sage/20 bg-white/60 px-3 py-2 text-[10px] md:text-xs text-zinc-700 outline-none ${
+                  !isAttending ? "opacity-60" : ""
+                }`}
+              >
+                <option value="veg">Veg</option>
+                <option value="non-veg">Non-Veg</option>
+              </select>
+            </div>
+          ))}
+        </div>
+
+        {errorMessage && <p className="text-[10px] md:text-xs text-red-700 font-semibold">{errorMessage}</p>}
+        {successMessage && <p className="text-[10px] md:text-xs text-sage font-bold">{successMessage}</p>}
+
+        <button
+          type="submit"
+          data-no-flip
+          disabled={submitting}
+          className="w-full bg-sage text-white py-2.5 md:py-3 rounded-xl text-[9px] md:text-xs uppercase tracking-widest font-bold disabled:opacity-60"
+        >
+          {submitting ? "Submitting..." : "Submit RSVP"}
+        </button>
+
+        {!endpoint && (
+          <p className="text-[9px] md:text-[10px] text-zinc-500">
+            Admin setup needed: set <span className="font-bold">VITE_RSVP_ENDPOINT</span> to your Google Apps Script URL.
+          </p>
+        )}
+      </form>
+    </div>
   );
 }
 
@@ -1017,31 +1255,7 @@ export default function App() {
                 </div>
               }
               back={
-                <>
-                  <CheckCircle2 size={24} className="text-sage mb-2 md:mb-4 mx-auto opacity-70 md:w-8 md:h-8" />
-                  <h4 className="serif text-xl md:text-3xl text-sage mb-2 md:mb-4">Are you attending?</h4>
-                  <p className="text-[8px] md:text-xs text-zinc-500 uppercase tracking-widest mb-4 md:mb-8">
-                    Please let us know by
-                    <br />
-                    May 1st, 2026
-                  </p>
-                  <div className="w-full flex gap-2 md:gap-4 px-2 md:px-4">
-                    <motion.button
-                      whileHover={{ scale: 1.05, backgroundColor: "#2D2D2D" }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex-1 bg-sage text-white py-2 md:py-3 rounded-xl text-[8px] md:text-xs uppercase tracking-widest font-bold transition-colors"
-                    >
-                      Yes
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05, backgroundColor: "rgba(90, 99, 68, 0.1)" }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex-1 border border-sage text-sage py-2 md:py-3 rounded-xl text-[8px] md:text-xs uppercase tracking-widest font-bold transition-colors"
-                    >
-                      No
-                    </motion.button>
-                  </div>
-                </>
+                <RSVPForm />
               }
             />
           </motion.div>
@@ -1160,7 +1374,7 @@ export default function App() {
               front={
                 <div className="w-full h-full relative group overflow-hidden">
                   <img
-                    src="https://t3.ftcdn.net/jpg/01/65/52/08/360_F_165520839_6E1bLjjMeUEYqdiyKgerqLPiKUDsMHgI.jpg"
+                    src="/time.png"
                     alt="Timeline"
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                     referrerPolicy="no-referrer"
