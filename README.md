@@ -6,7 +6,7 @@
 
 # Hashmi & Zerlin
 .
-## Run locally
+## Run locally,
 
 **Prerequisites:** Node.js
 
