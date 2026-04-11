@@ -186,8 +186,8 @@ function RealisticPetal({ size = 20, className = "" }: { size?: number; classNam
       <svg width="100%" height="100%" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="petalGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#C4714A" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#9C8470" stopOpacity="0.65" />
+            <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#8C6D31" stopOpacity="0.65" />
           </radialGradient>
         </defs>
         <path
@@ -216,6 +216,7 @@ function RSVPForm() {
   const [partyType, setPartyType] = useState<PartyType>("individual");
   const [guestCount, setGuestCount] = useState<number>(1);
   const [guests, setGuests] = useState<GuestEntry[]>([{ name: "", meal: "non-veg" }]);
+  const [wishes, setWishes] = useState<string>("");
 
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -276,6 +277,7 @@ function RSVPForm() {
     }
 
     const payload = {
+      type: "rsvp",
       attendance,
       partyType,
       guestCount: isAttending ? effectiveGuestCount : 0,
@@ -285,7 +287,7 @@ function RSVPForm() {
 
     setSubmitting(true);
     try {
-      // Try JSON request first (works if endpoint supports CORS).
+      // Try JSON request first
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -295,7 +297,7 @@ function RSVPForm() {
       setSuccessMessage("RSVP saved. Thank you!");
     } catch {
       try {
-        // Fallback for Apps Script deployments without CORS.
+        // Fallback for Apps Script deployments
         const fd = new FormData();
         fd.append("payload", JSON.stringify(payload));
         await fetch(endpoint, { method: "POST", mode: "no-cors", body: fd });
@@ -311,8 +313,8 @@ function RSVPForm() {
   return (
     <div data-no-flip className="w-full cursor-auto">
       <CheckCircle2 size={24} className="text-sage mb-2 md:mb-4 mx-auto opacity-70 md:w-8 md:h-8" />
-      <h4 className="serif text-2xl md:text-3xl text-sage mb-2 md:mb-3 text-center">RSVP</h4>
-      <p className="text-[10px] md:text-xs text-zinc-500 uppercase tracking-widest mb-4 md:mb-6 text-center leading-relaxed">
+      <h4 className="serif text-2xl md:text-3xl text-sage mb-2 md:mb-3 text-center">RSVP & Wishes</h4>
+      <p className="text-[10px] md:text-xs text-stone-400 uppercase tracking-widest mb-4 md:mb-6 text-center leading-relaxed">
         Please let us know by
         <br />
         May 1st, 2026
@@ -324,7 +326,7 @@ function RSVPForm() {
             type="button"
             data-no-flip
             onClick={() => setAttendance("yes")}
-            className={`py-3 md:py-2.5 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${attendance === "yes" ? "bg-sage text-white border-sage" : "bg-white/40 text-sage border-sage/30"
+            className={`py-3 md:py-2.5 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${attendance === "yes" ? "bg-sage text-white border-sage" : "bg-sand/40 text-sage border-sand/30"
               }`}
           >
             Attending
@@ -333,7 +335,7 @@ function RSVPForm() {
             type="button"
             data-no-flip
             onClick={() => setAttendance("no")}
-            className={`py-3 md:py-2.5 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${attendance === "no" ? "bg-zinc-800 text-white border-zinc-800" : "bg-white/40 text-zinc-700 border-zinc-300/60"
+            className={`py-3 md:py-2.5 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${attendance === "no" ? "bg-stone-800 text-white border-stone-800" : "bg-sand/40 text-stone-400 border-sand/30"
               }`}
           >
             Not Attending
@@ -345,7 +347,7 @@ function RSVPForm() {
             type="button"
             data-no-flip
             onClick={() => setPartyType("individual")}
-            className={`py-3 md:py-2 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${partyType === "individual" ? "bg-sage/90 text-white border-sage" : "bg-white/40 text-sage border-sage/30"
+            className={`py-3 md:py-2 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${partyType === "individual" ? "bg-sage/90 text-white border-sage" : "bg-sand/40 text-sage border-sage/30"
               }`}
           >
             Individual
@@ -354,7 +356,7 @@ function RSVPForm() {
             type="button"
             data-no-flip
             onClick={() => setPartyType("family")}
-            className={`py-3 md:py-2 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${partyType === "family" ? "bg-sage/90 text-white border-sage" : "bg-white/40 text-sage border-sage/30"
+            className={`py-3 md:py-2 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${partyType === "family" ? "bg-sage/90 text-white border-sage" : "bg-sand/40 text-sage border-sage/30"
               }`}
           >
             Family
@@ -371,7 +373,7 @@ function RSVPForm() {
               max={12}
               value={effectiveGuestCount}
               onChange={(ev) => setGuestCount(Number(ev.target.value || 2))}
-              className="w-28 rounded-xl border border-sage/20 bg-white/60 px-3 py-2.5 text-xs text-zinc-700 outline-none"
+              className="w-28 rounded-xl border border-sage/20 bg-black/40 px-3 py-2.5 text-xs text-stone-300 outline-none"
             />
           </div>
         )}
@@ -390,7 +392,7 @@ function RSVPForm() {
                       : "Your name"
                     : "Your name"
                 }
-                className="w-full rounded-xl border border-sage/20 bg-white/60 px-3 py-2.5 text-xs text-zinc-700 outline-none"
+                className="w-full rounded-xl border border-sage/20 bg-black/40 px-3 py-2.5 text-xs text-stone-300 outline-none"
               />
 
               <select
@@ -398,7 +400,7 @@ function RSVPForm() {
                 disabled={!isAttending}
                 value={guest?.meal ?? "non-veg"}
                 onChange={(ev) => updateGuest(idx, { meal: ev.target.value as MealPreference })}
-                className={`w-full rounded-xl border border-sage/20 bg-white/60 px-3 py-2.5 text-xs text-zinc-700 outline-none ${!isAttending ? "opacity-60" : ""
+                className={`w-full rounded-xl border border-sage/20 bg-black/40 px-3 py-2.5 text-xs text-stone-300 outline-none ${!isAttending ? "opacity-60" : ""
                   }`}
               >
                 <option value="veg">Veg</option>
@@ -425,6 +427,103 @@ function RSVPForm() {
             Admin setup needed: set <span className="font-bold">VITE_RSVP_ENDPOINT</span> to your Google Apps Script URL.
           </p>
         )}
+      </form>
+    </div>
+  );
+}
+
+function WishesSection() {
+  const endpoint = (import.meta as any).env?.VITE_RSVP_ENDPOINT as string | undefined;
+  const [name, setName] = useState("");
+  const [wishes, setWishes] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (!endpoint) {
+      setErrorMessage("Endpoint not configured.");
+      return;
+    }
+    if (!name.trim() || !wishes.trim()) {
+      setErrorMessage("Please enter both your name and wishes.");
+      return;
+    }
+
+    setSubmitting(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    const payload = {
+      type: "wish",
+      name,
+      wishes,
+      submittedAt: new Date().toISOString(),
+    };
+
+    try {
+      // Try JSON request first
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      
+      if (!res.ok) throw new Error(String(res.status));
+      setSuccessMessage("Thank you for your wishes!");
+      setName("");
+      setWishes("");
+    } catch (err) {
+      try {
+        // Fallback for Apps Script deployments
+        const fd = new FormData();
+        fd.append("payload", JSON.stringify(payload));
+        await fetch(endpoint, { method: "POST", mode: "no-cors", body: fd });
+        
+        setSuccessMessage("Wishes submitted. Thank you!");
+        setName("");
+        setWishes("");
+      } catch (innerErr) {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="w-full mt-12 p-6 md:p-10 bg-sand/20 border border-white/5 rounded-3xl backdrop-blur-sm text-center max-w-4xl mx-auto z-10 relative shadow-lg">
+      <Heart size={28} className="text-sage mb-3 mx-auto opacity-80" fill="currentColor" />
+      <h3 className="serif text-3xl md:text-5xl text-sage mb-2 md:mb-4">Send Your Wishes</h3>
+      <p className="text-stone-400 text-xs md:text-sm mb-6 max-w-md mx-auto leading-relaxed">
+        Can't make it to the ceremony or just want to leave a heartfelt message? Share your wishes below!
+      </p>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-lg mx-auto text-left">
+        <input
+          value={name}
+          onChange={(ev) => setName(ev.target.value)}
+          placeholder="Your Name"
+          className="w-full rounded-xl border border-sage/20 bg-black/40 px-4 py-3 text-sm text-stone-300 outline-none"
+        />
+        <textarea
+          value={wishes}
+          onChange={(ev) => setWishes(ev.target.value)}
+          placeholder="Write your message here..."
+          className="w-full h-28 rounded-xl border border-sage/20 bg-black/40 px-4 py-3 text-sm text-stone-300 outline-none resize-none"
+        />
+
+        {errorMessage && <p className="text-xs text-red-700 font-semibold text-center">{errorMessage}</p>}
+        {successMessage && <p className="text-xs text-sage font-bold text-center">{successMessage}</p>}
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full bg-sage text-white py-3 md:py-4 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold disabled:opacity-60 mt-1 hover:bg-sage/80 transition-colors"
+        >
+          {submitting ? "Sending..." : "Send Wishes"}
+        </button>
       </form>
     </div>
   );
@@ -506,9 +605,9 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen bg-paper text-zinc-800 selection:bg-sage/20 overflow-x-hidden relative"
+      className="min-h-screen bg-paper text-white selection:bg-sage/40 overflow-x-hidden relative"
     >
-      <audio ref={audioRef} src="/song.mp3" loop preload="auto" />
+      <audio ref={audioRef} src="/Jessy's Land.mp3" loop preload="auto" />
 
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-sage origin-left z-[1000]" style={{ scaleX }} />
 
@@ -537,7 +636,7 @@ export default function App() {
               className="absolute top-12 md:top-24 left-0 right-0 text-center z-10 pointer-events-none"
             >
               <h1 className="serif text-4xl md:text-6xl text-sage/80 font-light tracking-[0.2em] drop-shadow-xl">
-                Hashimi & Zerlin
+                Rinaz & Afrina
               </h1>
               <p className="mt-3 text-[10px] md:text-xs uppercase tracking-[0.6em] text-sage/60 font-bold">
                 23 May 2026
@@ -575,7 +674,7 @@ export default function App() {
                   opacity: [0.6, 0.9, 0.6],
                 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-[30%] -left-[20%] w-[140%] h-[140%] rounded-full bg-[radial-gradient(circle,rgba(196,113,74,0.45)_0%,transparent_60%)] blur-3xl"
+                className="absolute -top-[30%] -left-[20%] w-[140%] h-[140%] rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.25)_0%,transparent_60%)] blur-3xl"
               />
               <motion.div
                 animate={{
@@ -584,7 +683,7 @@ export default function App() {
                   opacity: [0.5, 0.8, 0.5],
                 }}
                 transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-[30%] -right-[20%] w-[140%] h-[140%] rounded-full bg-[radial-gradient(circle,rgba(156,132,112,0.4)_0%,transparent_60%)] blur-3xl"
+                className="absolute -bottom-[30%] -right-[20%] w-[140%] h-[140%] rounded-full bg-[radial-gradient(circle,rgba(140,109,49,0.2)_0%,transparent_60%)] blur-3xl"
               />
 
               {!reduceEffects &&
@@ -773,8 +872,8 @@ export default function App() {
       </AnimatePresence>
 
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <img src="/background1.png" alt="Background" className="w-full h-full object-cover opacity-[0.35] md:opacity-[0.45]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-paper/40 via-transparent to-paper/40" />
+        <img src="/bg-black-gold.png" alt="Background" className="w-full h-full object-cover opacity-[0.5] md:opacity-[0.6]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-paper/80 via-transparent to-paper/80" />
       </div>
 
       <motion.main
@@ -812,8 +911,8 @@ export default function App() {
           <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 md:gap-16 mt-4 md:mt-8 relative w-full px-2">
             <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-32 bg-sage/5 blur-3xl rounded-full" />
 
-            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-9xl text-sage drop-shadow-lg relative z-10 leading-none">
-              Hashimi
+            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-8xl text-sage drop-shadow-lg relative z-10 leading-none">
+              Rinaz
             </motion.h2>
 
             <div className="relative flex items-center justify-center shrink-0">
@@ -829,8 +928,8 @@ export default function App() {
               <div className="h-px w-6 md:w-24 bg-sage/20 hidden md:block" />
             </div>
 
-            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-9xl text-sage drop-shadow-lg relative z-10 leading-none">
-              Zerlin
+            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-8xl text-sage drop-shadow-lg relative z-10 leading-none">
+              Afrina
             </motion.h2>
           </div>
 
@@ -1007,30 +1106,34 @@ export default function App() {
                     </motion.div>
 
                     {/* hosting families */}
+                    <p className="text-[6px] sm:text-[7px] md:text-[8px] uppercase tracking-[0.15em] text-sage/80 font-medium mb-3">
+                      IN THE NAME OF ALLAH THE MOST BENEFICIENT AND THE MOST MERCIFUL
+                    </p>
                     <div className="space-y-0.5">
-                      <p className="text-[8px] sm:text-[9px] md:text-[11px] uppercase tracking-[0.3em] text-umber font-bold leading-relaxed">
-                        MR. &amp; MRS. ZAKEER
+                      <p className="text-[8px] sm:text-[9px] md:text-[11px] uppercase tracking-[0.3em] text-sage font-bold leading-relaxed">
+                        MR. &amp; MRS. AL-HAJ FAIROOZ
                       </p>
-                      <p className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-taupe font-medium">
-                        TOGETHER WITH
+                      <p className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-stone-400 font-medium">
+                        together with
                       </p>
-                      <p className="text-[8px] sm:text-[9px] md:text-[11px] uppercase tracking-[0.3em] text-umber font-bold leading-relaxed">
-                        MR. &amp; MRS. ZAFIR ISMAIL
+                      <p className="text-[8px] sm:text-[9px] md:text-[11px] uppercase tracking-[0.3em] text-sage font-bold leading-relaxed">
+                        MR. &amp; MRS. AL-HAJ AL AMEEN
                       </p>
                     </div>
 
-                    <p className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.2em] text-taupe/80 font-medium leading-relaxed max-w-[200px] md:max-w-xs">
-                      REQUEST THE PLEASURE OF YOUR COMPANY TO CELEBRATE THE MARRIAGE OF THEIR CHILDREN
+                    <p className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.2em] text-stone-400 font-medium leading-relaxed max-w-[220px] md:max-w-sm">
+                      CORDIALLY INVITE MR. &amp; MRS.<br/>
+                      TO CELEBRATE THE WALEEMA CEREMONY OF
                     </p>
 
                     {/* couple names */}
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 max-w-full px-2">
-                      <span className="script text-[26px] sm:text-[32px] md:text-[48px] text-sage drop-shadow-sm leading-[1.1]">
-                        Zerlin
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 max-w-full px-2 mt-2">
+                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] text-sage drop-shadow-sm leading-[1.1]">
+                        Rinaz Ahamed
                       </span>
                       <span className="text-taupe/50 text-sm md:text-xl font-serif">&amp;</span>
-                      <span className="script text-[26px] sm:text-[32px] md:text-[48px] text-sage drop-shadow-sm leading-[1.1]">
-                        Hashimi
+                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] text-sage drop-shadow-sm leading-[1.1]">
+                        Afrina Al-Ameen
                       </span>
                     </div>
 
@@ -1038,17 +1141,17 @@ export default function App() {
                     <div className="flex items-center gap-2 sm:gap-3 text-umber/70 w-full mt-1">
                       <div className="h-px flex-1 bg-sand/45" />
                       <div className="flex flex-col items-center gap-0.5">
-                        <span className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.3em] text-taupe font-bold">
-                          MAY · SATURDAY
+                        <span className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.3em] text-sage font-bold">
+                          APRIL · MONDAY
                         </span>
-                        <span className="serif text-[22px] sm:text-[28px] md:text-4xl text-umber font-medium leading-none">
-                          23
+                        <span className="serif text-[22px] sm:text-[28px] md:text-4xl text-white font-medium leading-none">
+                          20
                         </span>
-                        <span className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-taupe font-bold">
-                          7:15 PM · 2026
+                        <span className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-sage font-bold">
+                          12:30 PM · 2026
                         </span>
-                        <span className="mt-1 block max-w-[200px] px-2 text-[7px] sm:text-[7px] md:text-[8px] uppercase tracking-[0.12em] text-taupe/75 text-center leading-snug break-words">
-                          GRAND BALLROOM, WATERS EDGE
+                        <span className="mt-1 block max-w-[200px] px-2 text-[7px] sm:text-[7px] md:text-[8px] uppercase tracking-[0.12em] text-stone-400 text-center leading-snug break-words">
+                          Pearl White Palace
                         </span>
                       </div>
                       <div className="h-px flex-1 bg-sand/45" />
@@ -1113,7 +1216,7 @@ export default function App() {
             <FlipCard
               containerClassName="w-full h-[220px] md:h-[350px] lg:h-[350px]"
               front={
-                <div className="w-full h-full bg-[#F5EFE0] p-2 md:p-8 flex flex-col items-center justify-center text-center space-y-2 md:space-y-4 relative group">
+                <div className="w-full h-full bg-sand p-2 md:p-8 flex flex-col items-center justify-center text-center space-y-2 md:space-y-4 relative group">
                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')] opacity-40 pointer-events-none" />
                   <div className="relative z-10 space-y-2 md:space-y-8 scale-[0.9] md:scale-100">
                     <div className="space-y-1">
@@ -1122,9 +1225,9 @@ export default function App() {
                     </div>
 
                     <div className="flex flex-col items-center">
-                      <p className="text-[8px] md:text-xs uppercase tracking-[0.4em] text-zinc-400 font-black mb-1 md:mb-2">Saturday</p>
+                      <p className="text-[8px] md:text-xs uppercase tracking-[0.4em] text-zinc-400 font-black mb-1 md:mb-2">Monday</p>
                       <div className="relative inline-block px-6 md:px-8 py-1 md:py-2 border-y border-sage/30">
-                        <p className="serif text-5xl md:text-8xl font-medium text-sage leading-none">23</p>
+                        <p className="serif text-5xl md:text-8xl font-medium text-sage leading-none">20</p>
                         <motion.div
                           animate={{ opacity: [0.4, 1, 0.4] }}
                           transition={{ repeat: Infinity, duration: 2 }}
@@ -1133,7 +1236,7 @@ export default function App() {
                           <Sparkles size={12} className="md:w-4 md:h-4" />
                         </motion.div>
                       </div>
-                      <p className="serif text-sm md:text-2xl font-light tracking-[0.2em] mt-2 md:mt-3">MAY</p>
+                      <p className="serif text-sm md:text-2xl font-light tracking-[0.2em] mt-2 md:mt-3">APRIL</p>
                     </div>
 
                     <div className="pt-1">
@@ -1150,8 +1253,8 @@ export default function App() {
                 <>
                   <Heart size={20} className="text-sage mb-2 md:mb-6 mx-auto opacity-70 md:w-8 md:h-8" />
                   <p className="serif text-[14px] md:text-2xl italic text-sage mb-2 md:mb-4 leading-relaxed">Our wedding date</p>
-                  <p className="text-[8px] md:text-xs text-zinc-500 uppercase tracking-widest leading-loose">
-                    Saturday · 23 May 2026
+                  <p className="text-[8px] md:text-xs text-stone-400 uppercase tracking-widest leading-loose">
+                    Monday · 20 April 2026
                   </p>
                 </>
               }
@@ -1168,7 +1271,7 @@ export default function App() {
             <FlipCard
               containerClassName="w-full h-[380px] md:h-[350px] lg:h-[350px]"
               front={
-                <div className="w-full h-full bg-[#F5EFE0] p-6 flex flex-col justify-center items-center text-center relative group overflow-hidden">
+                <div className="w-full h-full bg-sand p-6 flex flex-col justify-center items-center text-center relative group overflow-hidden">
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-sage/10 rounded-full blur-3xl pointer-events-none" />
                   <div className="relative z-10 space-y-3 md:space-y-6">
                     <p className="serif italic text-lg md:text-2xl text-sage/60 group-hover:scale-110 transition-transform">Kindly</p>
@@ -1224,9 +1327,9 @@ export default function App() {
               back={
                 <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-paper">
                   <HelpCircle size={28} className="text-sage mb-2 opacity-70" />
-                  <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold mb-2">Parking?</p>
+                  <p className="text-[10px] text-stone-300 uppercase tracking-widest font-bold mb-2">Parking?</p>
                   <p className="serif text-xs italic mb-4">Yes, free parking available.</p>
-                  <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold mb-2">Indoors?</p>
+                  <p className="text-[10px] text-stone-300 uppercase tracking-widest font-bold mb-2">Indoors?</p>
                   <p className="serif text-xs italic">Partial outdoors.</p>
                 </div>
               }
@@ -1238,60 +1341,60 @@ export default function App() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="w-full h-full col-span-2 lg:col-span-2"
+            className="w-full h-full col-span-1 lg:col-span-2"
           >
             <FlipCard
-              containerClassName="w-full h-[300px] md:h-[350px] lg:h-[350px]"
+              containerClassName="w-full h-[220px] md:h-[350px] lg:h-[350px]"
               front={
                 <div className="w-full h-full relative group">
                   <img
-                    src="https://www.watersedge.lk/wp-content/uploads/2026/01/004A2024-1024x1536.jpg"
-                    alt="Waters Edge Grand Ballroom"
+                    src="https://plus.unsplash.com/premium_photo-1661877303180-19a028c21048?q=80&w=1974&auto=format&fit=crop"
+                    alt="Pearl White Palace"
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
-                  <div className="absolute top-6 right-6 md:top-10 md:right-10 bg-white/60 backdrop-blur-md p-4 md:p-8 border border-white/60 rounded-2xl group-hover:bg-white/80 transition-all duration-700 shadow-xl">
-                    <p className="serif text-[8px] md:text-xs uppercase tracking-[0.4em] text-sage/80 mb-2 flex items-center gap-2">
-                      <span className="w-4 h-px bg-sage/30" />
+                  <div className="absolute top-2 right-2 md:top-10 md:right-10 bg-sand/60 backdrop-blur-md p-3 md:p-8 border border-white/10 rounded-2xl group-hover:bg-sand/80 transition-all duration-700 shadow-xl">
+                    <p className="serif text-[7px] md:text-xs uppercase tracking-[0.4em] text-sage/80 mb-1.5 flex items-center gap-2">
+                      <span className="w-3 md:w-4 h-px bg-sage/30" />
                       The Location
                     </p>
-                    <h3 className="serif text-2xl md:text-5xl text-sage leading-tight drop-shadow-sm font-medium">
-                      Waters Edge
+                    <h3 className="serif text-lg md:text-5xl text-sage leading-tight drop-shadow-sm font-medium">
+                      Pearl White
                       <br />
-                      Grand Ballroom
+                      Palace
                     </h3>
 
                     <motion.button
                       data-no-flip
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => window.open("https://maps.app.goo.gl/3EQ7xzj3EX9T2xEx6", "_blank")}
-                      className="mt-3 md:mt-5 px-5 py-2 md:px-7 md:py-3 bg-sage text-white rounded-full text-[9px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+                      onClick={() => window.open("https://maps.app.goo.gl/WJ27MNsetGpeFTRh9?g_st=ic", "_blank")}
+                      className="mt-2 md:mt-5 px-3 md:px-7 py-1.5 md:py-3 bg-sage text-white rounded-full text-[7px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
                     >
                       View Map
                     </motion.button>
                   </div>
 
-                  <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 text-sage flex items-center gap-3 bg-white/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/60 shadow-lg">
-                    <MapPin className="text-sage animate-bounce" size={16} />
-                    <p className="serif text-[10px] md:text-sm tracking-[0.2em] font-bold uppercase">Waters Edge</p>
+                  <div className="absolute bottom-3 left-3 md:bottom-10 md:left-10 text-sage flex items-center gap-1.5 md:gap-3 bg-sand/60 backdrop-blur-md px-2 md:px-4 py-1.5 md:py-2 rounded-full border border-white/10 shadow-lg">
+                    <MapPin className="text-sage animate-bounce" size={14} />
+                    <p className="serif text-[8px] md:text-sm tracking-[0.2em] font-bold uppercase">Pearl White Palace</p>
                   </div>
                 </div>
               }
               back={
                 <>
-                  <MapPin size={24} className="text-sage mb-4 md:mb-6 opacity-70 md:w-9 md:h-9" />
-                  <h4 className="serif text-2xl md:text-4xl text-sage mb-2 md:mb-4">Waters Edge Grand Ballroom</h4>
-                  <p className="text-[10px] md:text-sm text-zinc-500 uppercase tracking-widest leading-loose mb-4 md:mb-6">
-                    Waters Edge
+                  <MapPin size={24} className="text-sage mb-2 md:mb-6 opacity-70 md:w-9 md:h-9" />
+                  <h4 className="serif text-xl md:text-4xl text-sage mb-1 md:mb-4">Pearl White Palace</h4>
+                  <p className="text-[8px] md:text-sm text-stone-400 uppercase tracking-widest leading-loose mb-3 md:mb-6">
+                    Pearl White
                     <br />
-                    Grand Ballroom
+                    Palace
                   </p>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => window.open("https://maps.app.goo.gl/3EQ7xzj3EX9T2xEx6", "_blank")}
+                    onClick={() => window.open("https://maps.app.goo.gl/WJ27MNsetGpeFTRh9?g_st=ic", "_blank")}
                     className="px-6 py-2 md:px-8 md:py-3 bg-sage text-white rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
                   >
                     View Map
@@ -1306,10 +1409,10 @@ export default function App() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="w-full h-full col-span-2 lg:col-span-2"
+            className="w-full h-full col-span-1 lg:col-span-2"
           >
             <FlipCard
-              containerClassName="w-full h-[300px] md:h-[350px] lg:h-[350px]"
+              containerClassName="w-full h-[220px] md:h-[350px] lg:h-[350px]"
               front={
                 <div className="w-full h-full relative group overflow-hidden">
                   <img
@@ -1320,14 +1423,14 @@ export default function App() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
 
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center z-20">
-                    <motion.div initial={{ scale: 0.8, opacity: 0 }} whileHover={{ scale: 1, opacity: 1 }} className="bg-white/10 backdrop-blur-lg p-6 rounded-full border border-white/20">
-                      <Clock size={32} className="text-white" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-4 md:p-8 text-center z-20">
+                    <motion.div initial={{ scale: 0.8, opacity: 0 }} whileHover={{ scale: 1, opacity: 1 }} className="bg-white/10 backdrop-blur-lg p-4 md:p-6 rounded-full border border-white/20">
+                      <Clock size={24} className="text-white md:w-8 md:h-8" />
                     </motion.div>
-                    <p className="serif text-white text-3xl md:text-5xl italic tracking-widest mt-6 drop-shadow-lg">Event Timeline</p>
-                    <div className="mt-4 flex gap-2">
+                    <p className="serif text-white text-xl md:text-5xl italic tracking-widest mt-4 md:mt-6 drop-shadow-lg">Event Timeline</p>
+                    <div className="mt-2 md:mt-4 flex gap-1.5 md:gap-2">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                        <div key={i} className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-white/50" />
                       ))}
                     </div>
                   </div>
@@ -1340,18 +1443,18 @@ export default function App() {
               }
               back={
                 <div className="w-full h-full flex flex-col justify-center items-center px-4 md:px-8">
-                  <Clock size={24} className="text-sage mb-4 md:mb-6 opacity-70 md:w-8 md:h-8" />
-                  <h4 className="serif text-2xl md:text-3xl text-sage mb-4 md:mb-8">Timeline</h4>
+                  <Clock size={20} className="text-sage mb-2 md:mb-6 opacity-70 md:w-8 md:h-8" />
+                  <h4 className="serif text-xl md:text-3xl text-sage mb-3 md:mb-8">Timeline</h4>
 
-                  <div className="w-full max-w-sm space-y-4 md:space-y-6 text-left">
-                    <div className="flex items-start gap-2 md:gap-4">
-                      <span className="serif text-sage font-bold text-[10px] md:text-base w-12 md:w-20 text-right shrink-0 pt-1">7:45 PM</span>
-                      <div className="w-px h-full bg-sage/30 relative mt-2 -ml-[1px] md:-ml-2 shrink-0">
-                        <div className="absolute top-0 -left-[3px] w-2 h-2 rounded-full bg-sage" />
+                  <div className="w-full max-w-sm space-y-3 md:space-y-6 text-left px-2 md:px-0">
+                    <div className="flex items-start gap-1.5 md:gap-4">
+                      <span className="serif text-sage font-bold text-[9px] md:text-base w-10 md:w-20 text-right shrink-0 pt-0.5 md:pt-1">12:30 PM</span>
+                      <div className="w-px h-full bg-sage/30 relative mt-1 md:mt-2 -ml-[1px] md:-ml-2 shrink-0">
+                        <div className="absolute top-0 -left-[2px] md:-left-[3px] w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-sage" />
                       </div>
                       <div>
-                        <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Nikkah Ceremony</p>
-                        <p className="serif text-[10px] md:text-xs italic text-zinc-500">Followed by Dinner</p>
+                        <p className="text-[8px] md:text-xs font-bold uppercase tracking-wider leading-tight">Waleema Ceremony</p>
+                        <p className="serif text-[8px] md:text-xs italic text-stone-400 mt-0.5">Followed by Lunch</p>
                       </div>
                     </div>
                   </div>
@@ -1360,6 +1463,8 @@ export default function App() {
             />
           </motion.div>
         </div>
+
+        <WishesSection />
 
         <motion.footer
           initial={{ opacity: 0 }}
@@ -1372,10 +1477,14 @@ export default function App() {
             <span className="text-xs uppercase tracking-[0.6em] font-medium">Est. 2026</span>
             <div className="h-px w-16 bg-current" />
           </div>
-          <p className="serif italic text-zinc-500 text-xl max-w-lg mx-auto leading-relaxed">
+          <p className="serif italic text-stone-400 text-xl max-w-lg mx-auto leading-relaxed">
             "Love is not just something you feel, it's something you do."
           </p>
           <p className="serif text-sage/60 text-sm italic">We can't wait to celebrate with you</p>
+          <div className="mt-8">
+            <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold text-stone-500">Contact Us</p>
+            <p className="text-[10px] mt-1 tracking-widest text-stone-400">077 3260574 | 077 0069629</p>
+          </div>
         </motion.footer>
       </motion.main>
 
