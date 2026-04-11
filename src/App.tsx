@@ -317,7 +317,7 @@ function RSVPForm() {
       <p className="text-[10px] md:text-xs text-stone-400 uppercase tracking-widest mb-4 md:mb-6 text-center leading-relaxed">
         Please let us know by
         <br />
-        May 1st, 2026
+        April 15th, 2026
       </p>
 
       <form onSubmit={submit} className="space-y-4 md:space-y-4 px-1 md:px-2">
@@ -639,7 +639,7 @@ export default function App() {
                 Rinaz & Afrina
               </h1>
               <p className="mt-3 text-[10px] md:text-xs uppercase tracking-[0.6em] text-sage/60 font-bold">
-                23 May 2026
+                20 April 2026
               </p>
             </motion.div>
 
