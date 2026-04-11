@@ -109,8 +109,8 @@ function FlipCard({
         style={{ WebkitTransformStyle: "preserve-3d" }}
       >
         {/* Front */}
-        <div
-          className={`absolute inset-0 backface-hidden flip-face w-full h-full ${rounded} overflow-hidden shadow-2xl border border-white/40 ring-1 ring-black/5`}
+          <div
+          className={`absolute inset-0 backface-hidden flip-face w-full h-full ${rounded} overflow-hidden shadow-2xl border border-sage/40 ring-1 ring-black/5`}
           style={{ transform: "rotateY(0deg) translateZ(1px)", WebkitTransform: "rotateY(0deg) translateZ(1px)" }}
         >
           {front}
@@ -186,8 +186,9 @@ function RealisticPetal({ size = 20, className = "" }: { size?: number; classNam
       <svg width="100%" height="100%" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="petalGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#8C6D31" stopOpacity="0.65" />
+            <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.95" />
+            <stop offset="60%" stopColor="#BF953F" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#785E1E" stopOpacity="0.7" />
           </radialGradient>
         </defs>
         <path
@@ -326,7 +327,7 @@ function RSVPForm() {
             type="button"
             data-no-flip
             onClick={() => setAttendance("yes")}
-            className={`py-3 md:py-2.5 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${attendance === "yes" ? "bg-sage text-white border-sage" : "bg-sand/40 text-sage border-sand/30"
+            className={`py-3 md:py-2.5 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${attendance === "yes" ? "gold-gradient-bg text-paper border-sage" : "bg-sand/40 text-sage border-sand/30"
               }`}
           >
             Attending
@@ -347,7 +348,7 @@ function RSVPForm() {
             type="button"
             data-no-flip
             onClick={() => setPartyType("individual")}
-            className={`py-3 md:py-2 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${partyType === "individual" ? "bg-sage/90 text-white border-sage" : "bg-sand/40 text-sage border-sage/30"
+            className={`py-3 md:py-2 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${partyType === "individual" ? "gold-gradient-bg text-paper border-sage" : "bg-sand/40 text-sage border-sage/30"
               }`}
           >
             Individual
@@ -356,7 +357,7 @@ function RSVPForm() {
             type="button"
             data-no-flip
             onClick={() => setPartyType("family")}
-            className={`py-3 md:py-2 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${partyType === "family" ? "bg-sage/90 text-white border-sage" : "bg-sand/40 text-sage border-sage/30"
+            className={`py-3 md:py-2 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold border transition-colors ${partyType === "family" ? "gold-gradient-bg text-black border-sage" : "bg-sand/40 text-sage border-sage/30"
               }`}
           >
             Family
@@ -417,7 +418,7 @@ function RSVPForm() {
           type="submit"
           data-no-flip
           disabled={submitting}
-          className="w-full bg-sage text-white py-3 md:py-3 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold disabled:opacity-60"
+          className="w-full gold-gradient-bg shimmer text-paper py-3 md:py-3 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold disabled:opacity-60 shadow-lg shadow-gold/20"
         >
           {submitting ? "Submitting..." : "Submit RSVP"}
         </button>
@@ -495,7 +496,7 @@ function WishesSection() {
   return (
     <div className="w-full mt-12 p-6 md:p-10 bg-sand/20 border border-white/5 rounded-3xl backdrop-blur-sm text-center max-w-4xl mx-auto z-10 relative shadow-lg">
       <Heart size={28} className="text-sage mb-3 mx-auto opacity-80" fill="currentColor" />
-      <h3 className="serif text-3xl md:text-5xl text-sage mb-2 md:mb-4">Send Your Wishes</h3>
+      <h3 className="serif text-3xl md:text-5xl gold-gradient-text mb-2 md:mb-4 font-medium">Send Your Wishes</h3>
       <p className="text-stone-400 text-xs md:text-sm mb-6 max-w-md mx-auto leading-relaxed">
         Can't make it to the ceremony or just want to leave a heartfelt message? Share your wishes below!
       </p>
@@ -520,7 +521,7 @@ function WishesSection() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-sage text-white py-3 md:py-4 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold disabled:opacity-60 mt-1 hover:bg-sage/80 transition-colors"
+          className="w-full gold-gradient-bg shimmer text-paper py-3 md:py-4 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold disabled:opacity-60 mt-1 hover:opacity-90 transition-opacity"
         >
           {submitting ? "Sending..." : "Send Wishes"}
         </button>
@@ -617,7 +618,7 @@ export default function App() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsMuted((m) => !m)}
-        className="fixed bottom-6 right-6 z-[500] w-12 h-12 rounded-full bg-sage text-white shadow-2xl flex items-center justify-center backdrop-blur-md border border-white/20"
+        className="fixed bottom-6 right-6 z-[500] w-12 h-12 rounded-full gold-gradient-bg shimmer text-paper shadow-2xl flex items-center justify-center backdrop-blur-md border border-white/20"
       >
         {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} className="animate-pulse" />}
       </motion.button>
@@ -635,7 +636,7 @@ export default function App() {
               transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
               className="absolute top-12 md:top-24 left-0 right-0 text-center z-10 pointer-events-none"
             >
-              <h1 className="serif text-4xl md:text-6xl text-sage/80 font-light tracking-[0.2em] drop-shadow-xl">
+              <h1 className="serif text-4xl md:text-6xl gold-gradient-text shimmer font-light tracking-[0.2em] drop-shadow-2xl">
                 Rinaz & Afrina
               </h1>
               <p className="mt-3 text-[10px] md:text-xs uppercase tracking-[0.6em] text-sage/60 font-bold">
@@ -713,9 +714,9 @@ export default function App() {
                       <Flower2 className="text-sage/20 w-4 h-4 md:w-6 md:h-6" />
                     ) : (
                       <div
-                        className="rounded-full shadow-[0_0_15px_rgba(196,113,74,0.4)]"
+                        className="rounded-full shadow-[0_0_15px_rgba(212,175,55,0.4)]"
                         style={{
-                          backgroundColor: i % 2 === 0 ? "#C4714A" : "#A84C2C",
+                          backgroundColor: i % 2 === 0 ? "#D4AF37" : "#785E1E",
                           width: Math.random() * 6 + 2 + "px",
                           height: Math.random() * 6 + 2 + "px",
                           filter: `blur(${Math.random() * 1}px)`,
@@ -766,8 +767,8 @@ export default function App() {
                     key={`bokeh-${i}`}
                     className="absolute rounded-full mix-blend-soft-light"
                     style={{
-                      backgroundColor: i % 2 === 0 ? "#9C8470" : "#F5EFE0",
-                      opacity: 0.3,
+                      backgroundColor: i % 2 === 0 ? "#785E1E" : "#F9D99A",
+                      opacity: 0.25,
                       width: Math.random() * 150 + 100 + "px",
                       height: Math.random() * 150 + 100 + "px",
                       left: `${Math.random() * 100}%`,
@@ -797,7 +798,7 @@ export default function App() {
               className="relative w-full max-w-2xl h-80 md:h-[450px] rounded-[2.25rem] shadow-[0_34px_80px_-22px_rgba(0,0,0,0.55)] flex flex-col items-center justify-center z-10 overflow-hidden"
             >
               {/* premium envelope material */}
-              <div className="absolute inset-0 bg-gradient-to-b from-sage via-sage/90 to-rust" />
+              <div className="absolute inset-0 bg-gradient-to-br from-taupe via-sage to-taupe/80 shadow-inner" />
               <div className="absolute inset-0 opacity-25 bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')] pointer-events-none" />
               <div className="absolute inset-0 bg-gradient-to-br from-white/16 via-transparent to-umber/25 pointer-events-none" />
               <div className="absolute inset-[10px] rounded-[1.8rem] border border-white/18 pointer-events-none" />
@@ -827,7 +828,7 @@ export default function App() {
                 style={{ transformOrigin: "top", backfaceVisibility: "hidden" }}
                 className="absolute top-0 left-0 right-0 h-[55%] drop-shadow-2xl z-20 rounded-t-[2.25rem] clip-path-envelope flex flex-col items-center justify-start overflow-hidden pt-8 pointer-events-none"
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-sage to-rust" />
+                <div className="absolute inset-0 bg-gradient-to-br from-taupe via-sage to-taupe/90" />
                 <div className="absolute inset-0 opacity-22 bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')] pointer-events-none" />
                 <div className="absolute inset-0 bg-gradient-to-b from-white/18 via-transparent to-umber/25" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-white/25" />
@@ -848,7 +849,7 @@ export default function App() {
                   >
                     <div className="w-24 h-24 md:w-32 md:h-32 rounded-full shadow-[0_18px_50px_-18px_rgba(0,0,0,0.65)] flex items-center justify-center relative group-hover:scale-105 transition-transform duration-500 bg-paper/10 border border-white/30 p-1.5 backdrop-blur-md">
                       <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/14 via-transparent to-umber/25 pointer-events-none" />
-                      <div className="w-full h-full rounded-full bg-gradient-to-br from-sage to-rust shadow-[inset_0_-8px_18px_rgba(0,0,0,0.28),0_8px_18px_rgba(0,0,0,0.22)] flex items-center justify-center border border-white/14 relative overflow-hidden">
+                      <div className="w-full h-full rounded-full bg-gradient-to-br from-sienna via-sage to-taupe shadow-[inset_0_-8px_18px_rgba(0,0,0,0.28),0_8px_18px_rgba(0,0,0,0.22)] flex items-center justify-center border border-white/14 relative overflow-hidden">
                         <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-20 h-12 bg-paper/25 blur-2xl rounded-full" />
                         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,0.35)_0%,transparent_55%)]" />
                         <Heart className="relative text-paper/90 w-10 h-10 md:w-14 md:h-14 drop-shadow-md mt-1" fill="currentColor" />
@@ -900,10 +901,10 @@ export default function App() {
           </motion.div>
 
           <h1 className="flex flex-col items-center px-2">
-            <span className="serif italic text-3xl sm:text-5xl md:text-[8rem] text-sage font-light leading-tight drop-shadow-sm mb-1 md:mb-6">
+            <span className="serif italic text-3xl sm:text-5xl md:text-[8rem] gold-gradient-text font-light leading-tight drop-shadow-sm mb-1 md:mb-6">
               You're Invited!
             </span>
-            <span className="serif text-sm sm:text-base md:text-4xl text-sage/40 tracking-[0.15em] md:tracking-[0.3em] uppercase font-light">
+            <span className="serif text-sm sm:text-base md:text-4xl gold-gradient-text tracking-[0.15em] md:tracking-[0.3em] uppercase font-light">
               to the wedding of
             </span>
           </h1>
@@ -911,7 +912,7 @@ export default function App() {
           <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 md:gap-16 mt-4 md:mt-8 relative w-full px-2">
             <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-32 bg-sage/5 blur-3xl rounded-full" />
 
-            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-8xl text-sage drop-shadow-lg relative z-10 leading-none">
+            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-8xl gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-none">
               Rinaz
             </motion.h2>
 
@@ -928,7 +929,7 @@ export default function App() {
               <div className="h-px w-6 md:w-24 bg-sage/20 hidden md:block" />
             </div>
 
-            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-8xl text-sage drop-shadow-lg relative z-10 leading-none">
+            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-8xl gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-none">
               Afrina
             </motion.h2>
           </div>
@@ -988,7 +989,7 @@ export default function App() {
 
               {/* envelope body back */}
               <div className="absolute bottom-0 left-0 right-0 h-[64%] sm:h-[66%] md:h-[68%] rounded-b-[2.5rem] overflow-hidden z-10 shadow-[0_24px_70px_-12px_rgba(61,34,21,0.55)]">
-                <div className="absolute inset-0 bg-gradient-to-b from-umber via-rust/35 to-sienna/55" />
+                <div className="absolute inset-0 bg-gradient-to-b from-umber via-taupe/40 to-sienna/50" />
                 <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')]" />
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-umber/25" />
                 <div className="absolute inset-x-0 top-0 h-[2px] bg-white/8" />
@@ -1012,7 +1013,7 @@ export default function App() {
                 }}
               >
                 <div
-                  className="absolute inset-0 bg-gradient-to-br from-umber/95 via-rust/70 to-sienna/75"
+                  className="absolute inset-0 bg-gradient-to-br from-umber/95 via-taupe/70 to-sienna/70"
                   style={{
                     clipPath: "polygon(0 100%, 50% 0, 100% 100%)",
                   }}
@@ -1022,7 +1023,7 @@ export default function App() {
                 </div>
 
                 <div
-                  className="absolute inset-0 bg-gradient-to-b from-sage to-rust"
+                  className="absolute inset-0 bg-gradient-to-br from-taupe via-sage to-taupe/80"
                   style={{
                     clipPath: "polygon(3% 100%, 50% 10%, 97% 100%)",
                   }}
@@ -1050,7 +1051,7 @@ export default function App() {
               >
                 <div className="absolute -bottom-4 left-6 right-6 h-10 bg-umber/20 blur-xl rounded-full" />
 
-                <div className="relative bg-paper rounded-[1.6rem] md:rounded-[2rem] shadow-[0_-20px_60px_rgba(0,0,0,0.16),0_10px_30px_rgba(0,0,0,0.08)] border border-sand/35 overflow-hidden">
+                <div className="relative bg-paper rounded-[1.6rem] md:rounded-[2rem] shadow-[0_-20px_60px_rgba(0,0,0,0.16),0_10px_30px_rgba(0,0,0,0.08)] border border-sage/35 overflow-hidden">
                   <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-sage/12 blur-3xl rounded-full" />
@@ -1128,11 +1129,11 @@ export default function App() {
 
                     {/* couple names */}
                     <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 max-w-full px-2 mt-2">
-                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] text-sage drop-shadow-sm leading-[1.1]">
+                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] gold-gradient-text shimmer drop-shadow-sm leading-[1.1]">
                         Rinaz Ahamed
                       </span>
                       <span className="text-taupe/50 text-sm md:text-xl font-serif">&amp;</span>
-                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] text-sage drop-shadow-sm leading-[1.1]">
+                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] gold-gradient-text shimmer drop-shadow-sm leading-[1.1]">
                         Afrina Al-Ameen
                       </span>
                     </div>
@@ -1172,7 +1173,7 @@ export default function App() {
               {/* front flaps */}
               <div className="absolute bottom-0 left-0 right-0 h-[64%] sm:h-[66%] md:h-[68%] z-30 rounded-b-[2.5rem] overflow-hidden pointer-events-none">
                 <div
-                  className="absolute inset-0 bg-gradient-to-br from-umber via-rust/85 to-sienna/80"
+                  className="absolute inset-0 bg-gradient-to-br from-umber via-taupe/40 to-umber/80"
                   style={{
                     clipPath: "polygon(0 0, 50% 55%, 0 100%)",
                   }}
@@ -1182,7 +1183,7 @@ export default function App() {
                 </div>
 
                 <div
-                  className="absolute inset-0 bg-gradient-to-bl from-umber via-rust/85 to-sienna/80"
+                  className="absolute inset-0 bg-gradient-to-bl from-umber via-taupe/40 to-umber/80"
                   style={{
                     clipPath: "polygon(100% 0, 50% 55%, 100% 100%)",
                   }}
@@ -1282,7 +1283,7 @@ export default function App() {
                     >
                       <img src="/images/logo.png" alt="H&Z Logo" className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 object-contain drop-shadow-xl" />
                     </motion.div>
-                    <h3 className="serif text-2xl md:text-4xl tracking-[0.3em] font-medium text-sage">RSVP</h3>
+                    <h3 className="serif text-2xl md:text-4xl tracking-[0.3em] font-medium gold-gradient-text">RSVP</h3>
                   </div>
                 </div>
               }
@@ -1304,13 +1305,13 @@ export default function App() {
               rounded="rounded-full"
               className="w-36 h-36 md:w-56 md:h-56 shadow-2xl"
               front={
-                <div className="w-full h-full relative group flex flex-col items-center justify-center bg-sage border-4 border-white/20 overflow-hidden">
+                <div className="w-full h-full relative group flex flex-col items-center justify-center gold-gradient-bg shimmer border-4 border-white/20 overflow-hidden">
                   <motion.div
                     animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
                     transition={{ repeat: Infinity, duration: 5 }}
                     className="absolute w-full h-full bg-gradient-to-tr from-[#A84C2C]/40 via-transparent to-[#C9B99A]/20 blur-xl"
                   />
-                  <div className="relative z-10 text-white space-y-2">
+                  <div className="relative z-10 text-paper space-y-2">
                     <p className="serif italic text-[8px] md:text-sm opacity-80 mb-1">Curious?</p>
                     <h3 className="serif text-xl md:text-5xl tracking-widest uppercase font-light">FAQS</h3>
                     <motion.div
@@ -1370,7 +1371,7 @@ export default function App() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => window.open("https://maps.app.goo.gl/WJ27MNsetGpeFTRh9?g_st=ic", "_blank")}
-                      className="mt-2 md:mt-5 px-3 md:px-7 py-1.5 md:py-3 bg-sage text-white rounded-full text-[7px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+                      className="mt-2 md:mt-5 px-3 md:px-7 py-1.5 md:py-3 gold-gradient-bg shimmer text-paper rounded-full text-[7px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
                     >
                       View Map
                     </motion.button>
@@ -1395,7 +1396,7 @@ export default function App() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => window.open("https://maps.app.goo.gl/WJ27MNsetGpeFTRh9?g_st=ic", "_blank")}
-                    className="px-6 py-2 md:px-8 md:py-3 bg-sage text-white rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+                    className="px-6 py-2 md:px-8 md:py-3 gold-gradient-bg shimmer text-paper rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
                   >
                     View Map
                   </motion.button>
@@ -1444,7 +1445,7 @@ export default function App() {
               back={
                 <div className="w-full h-full flex flex-col justify-center items-center px-4 md:px-8">
                   <Clock size={20} className="text-sage mb-2 md:mb-6 opacity-70 md:w-8 md:h-8" />
-                  <h4 className="serif text-xl md:text-3xl text-sage mb-3 md:mb-8">Timeline</h4>
+                  <h4 className="serif text-xl md:text-3xl gold-gradient-text shimmer mb-3 md:mb-8 font-medium">Timeline</h4>
 
                   <div className="w-full max-w-sm space-y-3 md:space-y-6 text-left px-2 md:px-0">
                     <div className="flex items-start gap-1.5 md:gap-4">

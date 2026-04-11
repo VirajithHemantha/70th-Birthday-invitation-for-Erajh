@@ -16,19 +16,47 @@
   --font-script: "Great Vibes", cursive;
   --font-sans: "Inter", sans-serif;
 
-  /* Primary accent — drives all `sage` classes */
-  --color-sage:   #D4AF37;   /* Gold */
+  /* Primary accent — Premium Gold */
+  --color-sage:   #D4AF37;   /* Primary Gold (Metallic) */
 
-  /* Background — drives all `paper` classes */
-  --color-paper:  #050505;   /* Black */
+  /* Background — Deep Black */
+  --color-paper:  #050505;   /* Rich Black */
 
-  /* Mapping old names to new Black & Gold palette */
-  --color-sand:   #121212;
-  --color-taupe:  #8C6D31;
-  --color-terra:  #D4AF37;
-  --color-rust:   #8C6D31;
-  --color-umber:  #1A1A1A;
-  --color-sienna: #F9D99A;
+  /* Mapping old names to new Premium Gold & Black palette */
+  --color-sand:   #121212;   /* Dark neutral */
+  --color-taupe:  #785E1E;   /* Deep Burnished Gold */
+  --color-terra:  #D4AF37;   /* Classic Gold contrast */
+  --color-rust:   #A37D1D;   /* Bright Gold Contrast */
+  --color-umber:  #1A1A1A;   /* Charcoal for depth */
+  --color-sienna: #F9D99A;   /* Champagne / Light Gold */
+}
+
+/* Gold Gradient Utilities */
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 30%, #B38728 50%, #FBF5B7 70%, #AA771C 100%);
+  background-size: 200% 200%;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #D4AF37; /* Fallback */
+}
+
+.shimmer {
+  animation: shimmer 6s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.gold-gradient-border {
+  border: 1px solid transparent;
+  border-image: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C) 1;
 }
 
 body {
