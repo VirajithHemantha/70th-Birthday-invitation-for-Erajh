@@ -314,7 +314,7 @@ function RSVPForm() {
   return (
     <div data-no-flip className="w-full cursor-auto">
       <CheckCircle2 size={24} className="text-sage mb-2 md:mb-4 mx-auto opacity-70 md:w-8 md:h-8" />
-      <h4 className="serif text-2xl md:text-3xl text-sage mb-2 md:mb-3 text-center">RSVP & Wishes</h4>
+      <h4 className="serif text-2xl md:text-3xl text-sage mb-2 md:mb-3 text-center">RSVP</h4>
       <p className="text-[10px] md:text-xs text-stone-400 uppercase tracking-widest mb-4 md:mb-6 text-center leading-relaxed">
         Please let us know by
         <br />
@@ -634,9 +634,9 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
-              className="absolute top-12 md:top-24 left-0 right-0 text-center z-10 pointer-events-none"
+              className="absolute top-12 md:top-24 left-0 right-0 text-center z-10 pointer-events-none px-4"
             >
-              <h1 className="serif text-4xl md:text-6xl gold-gradient-text shimmer font-light tracking-[0.2em] drop-shadow-2xl">
+              <h1 className="serif text-3xl sm:text-4xl md:text-6xl gold-gradient-text shimmer font-light tracking-[0.1em] sm:tracking-[0.2em] drop-shadow-2xl">
                 Rinaz & Afrina
               </h1>
               <p className="mt-3 text-[10px] md:text-xs uppercase tracking-[0.6em] text-sage/60 font-bold">
@@ -811,8 +811,8 @@ export default function App() {
                 />
               )}
 
-              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 md:space-y-6">
-                <span className="serif text-white/50 text-lg md:text-3xl tracking-[0.4em] md:tracking-[0.6em] uppercase text-center px-4">
+              <div className="absolute inset-0 flex flex-col items-center justify-center pb-32 md:pb-40 space-y-4 md:space-y-6 z-25">
+                <span className="serif text-white font-bold text-lg md:text-3xl tracking-[0.4em] md:tracking-[0.6em] uppercase text-center px-4 drop-shadow-md">
                   The Invitation
                 </span>
                 <div className="w-10 md:w-16 h-px bg-white/20" />
@@ -912,7 +912,7 @@ export default function App() {
           <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 md:gap-16 mt-4 md:mt-8 relative w-full px-2">
             <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-32 bg-sage/5 blur-3xl rounded-full" />
 
-            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-8xl gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-none">
+            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[12vw] sm:text-6xl md:text-[7rem] gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-relaxed px-1">
               Rinaz
             </motion.h2>
 
@@ -929,7 +929,7 @@ export default function App() {
               <div className="h-px w-6 md:w-24 bg-sage/20 hidden md:block" />
             </div>
 
-            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[13vw] sm:text-6xl md:text-8xl gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-none">
+            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[12vw] sm:text-6xl md:text-[7rem] gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-relaxed px-1">
               Afrina
             </motion.h2>
           </div>
@@ -1101,9 +1101,12 @@ export default function App() {
                     <motion.div
                       animate={{ scale: [1, 1.04, 1] }}
                       transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                      className="-mb-3 sm:-mb-2 md:mb-0"
+                      className="mb-4 md:mb-6"
                     >
-                      <img src="/images/logo.png" alt="H&Z Logo" className="w-32 h-32 sm:w-36 sm:h-36 md:w-48 md:h-48 object-contain drop-shadow-md" />
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-32 rounded-full border border-sage/20 flex items-center justify-center bg-paper/40 backdrop-blur-sm shadow-lg mx-auto relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-sage/5 to-transparent pointer-events-none" />
+                        <span className="script text-2xl sm:text-4xl md:text-6xl gold-gradient-text shimmer select-none leading-relaxed px-2">RA</span>
+                      </div>
                     </motion.div>
 
                     {/* hosting families */}
@@ -1128,12 +1131,12 @@ export default function App() {
                     </p>
 
                     {/* couple names */}
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 max-w-full px-2 mt-2">
-                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] gold-gradient-text shimmer drop-shadow-sm leading-[1.1]">
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 max-w-full px-4 mt-2">
+                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] gold-gradient-text shimmer drop-shadow-sm leading-[1.6] px-2">
                         Rinaz Ahamed
                       </span>
                       <span className="text-taupe/50 text-sm md:text-xl font-serif">&amp;</span>
-                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] gold-gradient-text shimmer drop-shadow-sm leading-[1.1]">
+                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] gold-gradient-text shimmer drop-shadow-sm leading-[1.6] px-2">
                         Afrina Al-Ameen
                       </span>
                     </div>
@@ -1281,7 +1284,11 @@ export default function App() {
                       transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
                       className="group-hover:scale-110 transition-transform duration-500"
                     >
-                      <img src="/images/logo.png" alt="H&Z Logo" className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 object-contain drop-shadow-xl" />
+                      <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-full border-2 border-sage/20 flex items-center justify-center bg-paper/30 backdrop-blur-md shadow-2xl mx-auto relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-sage/10 via-transparent to-sage/5 pointer-events-none" />
+                        <span className="script text-6xl sm:text-8xl md:text-[8rem] gold-gradient-text shimmer select-none leading-relaxed px-4">RA</span>
+                        <div className="absolute inset-4 rounded-full border border-sage/10 pointer-events-none" />
+                      </div>
                     </motion.div>
                     <h3 className="serif text-2xl md:text-4xl tracking-[0.3em] font-medium gold-gradient-text">RSVP</h3>
                   </div>
