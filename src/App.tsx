@@ -1489,10 +1489,7 @@ export default function App() {
             "Love is not just something you feel, it's something you do."
           </p>
           <p className="serif text-sage/60 text-sm italic">We can't wait to celebrate with you</p>
-          <div className="mt-8">
-            <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold text-stone-500">Contact Us</p>
-            <p className="text-[10px] mt-1 tracking-widest text-stone-400">077 3260574 | 077 0069629</p>
-          </div>
+
         </motion.footer>
       </motion.main>
 
