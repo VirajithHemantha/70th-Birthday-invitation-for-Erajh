@@ -515,20 +515,7 @@ export default function App() {
     <div
       className="min-h-screen bg-paper text-white selection:bg-sage/40 overflow-x-hidden relative"
     >
-      <audio ref={audioRef} src="/Jessy's Land.mp3" loop preload="auto" />
-
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-sage origin-left z-[1000]" style={{ scaleX }} />
-
-      <motion.button
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsMuted((m) => !m)}
-        className="fixed bottom-6 right-6 z-[500] w-12 h-12 rounded-full gold-gradient-bg shimmer text-paper shadow-2xl flex items-center justify-center backdrop-blur-md border border-white/20"
-      >
-        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} className="animate-pulse" />}
-      </motion.button>
 
       <AnimatePresence>
         {!isOpened && (
