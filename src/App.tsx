@@ -109,7 +109,7 @@ function FlipCard({
         style={{ WebkitTransformStyle: "preserve-3d" }}
       >
         {/* Front */}
-          <div
+        <div
           className={`absolute inset-0 backface-hidden flip-face w-full h-full ${rounded} overflow-hidden shadow-2xl border border-sage/40 ring-1 ring-black/5`}
           style={{ transform: "rotateY(0deg) translateZ(1px)", WebkitTransform: "rotateY(0deg) translateZ(1px)" }}
         >
@@ -318,7 +318,9 @@ function RSVPForm() {
       <p className="text-[10px] md:text-xs text-stone-400 uppercase tracking-widest mb-4 md:mb-6 text-center leading-relaxed">
         Please let us know by
         <br />
-        April 15th, 2026
+        September 15th, 2026
+        <br />
+        <span className="text-[10px] md:text-[11px] font-bold text-sage pt-2 block">RSVP: 0778567867 (Shehara)</span>
       </p>
 
       <form onSubmit={submit} className="space-y-4 md:space-y-4 px-1 md:px-2">
@@ -433,102 +435,7 @@ function RSVPForm() {
   );
 }
 
-function WishesSection() {
-  const endpoint = (import.meta as any).env?.VITE_RSVP_ENDPOINT as string | undefined;
-  const [name, setName] = useState("");
-  const [wishes, setWishes] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = async (ev: React.FormEvent) => {
-    ev.preventDefault();
-    if (!endpoint) {
-      setErrorMessage("Endpoint not configured.");
-      return;
-    }
-    if (!name.trim() || !wishes.trim()) {
-      setErrorMessage("Please enter both your name and wishes.");
-      return;
-    }
-
-    setSubmitting(true);
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    const payload = {
-      type: "wish",
-      name,
-      wishes,
-      submittedAt: new Date().toISOString(),
-    };
-
-    try {
-      // Try JSON request first
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      
-      if (!res.ok) throw new Error(String(res.status));
-      setSuccessMessage("Thank you for your wishes!");
-      setName("");
-      setWishes("");
-    } catch (err) {
-      try {
-        // Fallback for Apps Script deployments
-        const fd = new FormData();
-        fd.append("payload", JSON.stringify(payload));
-        await fetch(endpoint, { method: "POST", mode: "no-cors", body: fd });
-        
-        setSuccessMessage("Wishes submitted. Thank you!");
-        setName("");
-        setWishes("");
-      } catch (innerErr) {
-        setErrorMessage("Something went wrong. Please try again.");
-      }
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <div className="w-full mt-12 p-6 md:p-10 bg-sand/20 border border-white/5 rounded-3xl backdrop-blur-sm text-center max-w-4xl mx-auto z-10 relative shadow-lg">
-      <Heart size={28} className="text-sage mb-3 mx-auto opacity-80" fill="currentColor" />
-      <h3 className="serif text-3xl md:text-5xl gold-gradient-text mb-2 md:mb-4 font-medium">Send Your Wishes</h3>
-      <p className="text-stone-400 text-xs md:text-sm mb-6 max-w-md mx-auto leading-relaxed">
-        Can't make it to the ceremony or just want to leave a heartfelt message? Share your wishes below!
-      </p>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-lg mx-auto text-left">
-        <input
-          value={name}
-          onChange={(ev) => setName(ev.target.value)}
-          placeholder="Your Name"
-          className="w-full rounded-xl border border-sage/20 bg-black/40 px-4 py-3 text-sm text-stone-300 outline-none"
-        />
-        <textarea
-          value={wishes}
-          onChange={(ev) => setWishes(ev.target.value)}
-          placeholder="Write your message here..."
-          className="w-full h-28 rounded-xl border border-sage/20 bg-black/40 px-4 py-3 text-sm text-stone-300 outline-none resize-none"
-        />
-
-        {errorMessage && <p className="text-xs text-red-700 font-semibold text-center">{errorMessage}</p>}
-        {successMessage && <p className="text-xs text-sage font-bold text-center">{successMessage}</p>}
-
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full gold-gradient-bg shimmer text-paper py-3 md:py-4 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-bold disabled:opacity-60 mt-1 hover:opacity-90 transition-opacity"
-        >
-          {submitting ? "Sending..." : "Send Wishes"}
-        </button>
-      </form>
-    </div>
-  );
-}
 
 export default function App() {
   const [isFlapOpen, setIsFlapOpen] = useState(false);
@@ -636,11 +543,19 @@ export default function App() {
               transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
               className="absolute top-12 md:top-24 left-0 right-0 text-center z-10 pointer-events-none px-4"
             >
+              <h2 className="text-xl sm:text-2xl md:text-3xl text-sage font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase mb-4 drop-shadow-md">
+                70th Birthday Invitation
+              </h2>
+              <div className="bg-black/60 border border-sage/40 rounded-full px-4 sm:px-6 py-2 sm:py-3 mb-6 md:mb-8 inline-block backdrop-blur-md shadow-[0_0_15px_rgba(212,175,55,0.25)]">
+                <p className="text-[10px] sm:text-xs md:text-sm font-bold gold-gradient-text tracking-wider uppercase">
+                  Shhh… It’s a surprise! Let’s keep this celebration a secret from Erajh!
+                </p>
+              </div>
               <h1 className="serif text-3xl sm:text-4xl md:text-6xl gold-gradient-text shimmer font-light tracking-[0.1em] sm:tracking-[0.2em] drop-shadow-2xl">
-                Rinaz & Afrina
+                Erajh Alahakoon
               </h1>
               <p className="mt-3 text-[10px] md:text-xs uppercase tracking-[0.6em] text-sage/60 font-bold">
-                20 April 2026
+                27 September 2026
               </p>
             </motion.div>
 
@@ -905,32 +820,40 @@ export default function App() {
               You're Invited!
             </span>
             <span className="serif text-sm sm:text-base md:text-4xl gold-gradient-text tracking-[0.15em] md:tracking-[0.3em] uppercase font-light">
-              to the wedding of
+              to celebrate the 70th birthday of
             </span>
           </h1>
 
-          <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 md:gap-16 mt-4 md:mt-8 relative w-full px-2">
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-32 bg-sage/5 blur-3xl rounded-full" />
+          <div className="flex flex-col items-center justify-center mt-4 md:mt-12 relative w-full px-2">
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-48 bg-sage/10 blur-[80px] rounded-full pointer-events-none" />
 
-            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[12vw] sm:text-6xl md:text-[7rem] gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-relaxed px-1">
-              Rinaz
-            </motion.h2>
-
-            <div className="relative flex items-center justify-center shrink-0">
-              <div className="h-px w-6 md:w-24 bg-sage/20 hidden md:block" />
-              <div className="relative mx-1 md:mx-4">
-                <Heart className="text-sage/40 w-5 h-5 sm:w-7 sm:h-7 md:w-10 md:h-10 animate-pulse" fill="currentColor" />
-                <motion.div
-                  animate={{ scale: [1, 1.5, 1], opacity: [0, 1, 0] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                  className="absolute inset-0 bg-sage/20 blur-xl rounded-full"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={isOpened ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+              transition={{ delay: 1.2, duration: 1.5, ease: "easeOut" }}
+              className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 mx-auto mb-6 md:mb-10 relative group z-20"
+            >
+              {/* Elegant glowing backdrop */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#C9B99A]/30 to-transparent blur-3xl rounded-full opacity-50 group-hover:opacity-80 transition-opacity duration-1000" />
+              
+              {/* The actual photo container with a premium border */}
+              <div className="w-full h-full rounded-full overflow-hidden border-[3px] border-[#C9B99A]/40 shadow-[0_0_40px_rgba(201,185,154,0.2)] relative z-10">
+                <img 
+                  src="/erajh.jpeg" 
+                  alt="Erajh Alahakoon" 
+                  className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110"
                 />
+                {/* Inner ring overlay */}
+                <div className="absolute inset-0 rounded-full border-[2px] border-black/20 pointer-events-none" />
               </div>
-              <div className="h-px w-6 md:w-24 bg-sage/20 hidden md:block" />
-            </div>
+              
+              {/* Decorative outer ring */}
+              <div className="absolute -inset-4 md:-inset-6 rounded-full border border-[#C9B99A]/30 scale-95 group-hover:scale-100 transition-transform duration-1000" />
+              <div className="absolute -inset-8 md:-inset-12 rounded-full border border-[#C9B99A]/20 border-dashed scale-105 group-hover:rotate-12 transition-all duration-[3000ms]" />
+            </motion.div>
 
-            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[12vw] sm:text-6xl md:text-[7rem] gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-relaxed px-1">
-              Afrina
+            <motion.h2 whileHover={{ scale: 1.05 }} className="script text-[10vw] sm:text-5xl md:text-[6rem] gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-relaxed px-1 text-center">
+              Erajh Alahakoon
             </motion.h2>
           </div>
 
@@ -999,7 +922,7 @@ export default function App() {
                 <div className="absolute top-0 bottom-0 right-0 w-px bg-white/8" />
                 <div className="absolute bottom-5 left-0 right-0 flex flex-col items-center gap-1 pointer-events-none">
                   <div className="w-16 h-px bg-sand/45" />
-                  <p className="serif italic text-sand/55 text-[10px] tracking-[0.4em] uppercase">Official Invite · 2026</p>
+                  <p className="serif italic text-sand/55 text-[10px] tracking-[0.4em] uppercase">Official Invite Â· 2026</p>
                   <div className="w-16 h-px bg-sand/45" />
                 </div>
               </div>
@@ -1105,39 +1028,34 @@ export default function App() {
                     >
                       <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-32 rounded-full border border-sage/20 flex items-center justify-center bg-paper/40 backdrop-blur-sm shadow-lg mx-auto relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-sage/5 to-transparent pointer-events-none" />
-                        <span className="script text-2xl sm:text-4xl md:text-6xl gold-gradient-text shimmer select-none leading-relaxed px-2">RA</span>
+                        <span className="script text-2xl sm:text-4xl md:text-6xl gold-gradient-text shimmer select-none leading-relaxed px-2">EA</span>
                       </div>
                     </motion.div>
 
                     {/* hosting families */}
                     <p className="text-[6px] sm:text-[7px] md:text-[8px] uppercase tracking-[0.15em] text-sage/80 font-medium mb-3">
-                      IN THE NAME OF ALLAH THE MOST BENEFICIENT AND THE MOST MERCIFUL
+                      JOIN US IN CELEBRATING
                     </p>
                     <div className="space-y-0.5">
                       <p className="text-[8px] sm:text-[9px] md:text-[11px] uppercase tracking-[0.3em] text-sage font-bold leading-relaxed">
-                        MR. &amp; MRS. AL-HAJ FAIROOZ
+                        A MILESTONE MOMENT
                       </p>
                       <p className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-stone-400 font-medium">
-                        together with
+                        AND A LIFE FULL OF JOY
                       </p>
                       <p className="text-[8px] sm:text-[9px] md:text-[11px] uppercase tracking-[0.3em] text-sage font-bold leading-relaxed">
-                        MR. &amp; MRS. AL-HAJ AL AMEEN
+                        SEVENTY WONDERFUL YEARS
                       </p>
                     </div>
 
                     <p className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.2em] text-stone-400 font-medium leading-relaxed max-w-[220px] md:max-w-sm">
-                      CORDIALLY INVITE MR. &amp; MRS.<br/>
-                      TO CELEBRATE THE WALEEMA CEREMONY OF
+                      CORDIALLY INVITE YOU TO CELEBRATE THE<br />TO THE 70TH BIRTHDAY OF
                     </p>
 
                     {/* couple names */}
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 max-w-full px-4 mt-2">
-                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] gold-gradient-text shimmer drop-shadow-sm leading-[1.6] px-2">
-                        Rinaz Ahamed
-                      </span>
-                      <span className="text-taupe/50 text-sm md:text-xl font-serif">&amp;</span>
-                      <span className="script text-[22px] sm:text-[28px] md:text-[36px] gold-gradient-text shimmer drop-shadow-sm leading-[1.6] px-2">
-                        Afrina Al-Ameen
+                    <div className="flex flex-col items-center justify-center max-w-full px-4 mt-2">
+                      <span className="script text-[28px] sm:text-[36px] md:text-[48px] gold-gradient-text shimmer drop-shadow-sm leading-[1.6] px-2 text-center">
+                        Erajh Alahakoon
                       </span>
                     </div>
 
@@ -1146,16 +1064,16 @@ export default function App() {
                       <div className="h-px flex-1 bg-sand/45" />
                       <div className="flex flex-col items-center gap-0.5">
                         <span className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.3em] text-sage font-bold">
-                          APRIL · MONDAY
+                          APRIL Â· MONDAY
                         </span>
                         <span className="serif text-[22px] sm:text-[28px] md:text-4xl text-white font-medium leading-none">
                           20
                         </span>
                         <span className="text-[7px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-sage font-bold">
-                          12:30 PM · 2026
+                          11:30 AM Â· 2026
                         </span>
                         <span className="mt-1 block max-w-[200px] px-2 text-[7px] sm:text-[7px] md:text-[8px] uppercase tracking-[0.12em] text-stone-400 text-center leading-snug break-words">
-                          Pearl White Palace
+                          Kanaayan Banquet Hall
                         </span>
                       </div>
                       <div className="h-px flex-1 bg-sand/45" />
@@ -1209,13 +1127,13 @@ export default function App() {
         </div>
 
         {/* Bento Grid Layout - Flipped Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-10 relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-10 relative">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full h-full col-span-2 sm:col-span-1"
+            className="w-full h-full col-span-1 lg:col-span-1"
           >
             <FlipCard
               containerClassName="w-full h-[220px] md:h-[350px] lg:h-[350px]"
@@ -1224,14 +1142,14 @@ export default function App() {
                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')] opacity-40 pointer-events-none" />
                   <div className="relative z-10 space-y-2 md:space-y-8 scale-[0.9] md:scale-100">
                     <div className="space-y-1">
-                      <span className="serif italic text-[14px] md:text-2xl text-sage/70">Our Wedding Date</span>
+                      <span className="serif italic text-[14px] md:text-2xl text-sage/70">The Celebration Date</span>
                       <div className="w-full h-px bg-sage/20" />
                     </div>
 
                     <div className="flex flex-col items-center">
-                      <p className="text-[8px] md:text-xs uppercase tracking-[0.4em] text-zinc-400 font-black mb-1 md:mb-2">Monday</p>
+                      <p className="text-[8px] md:text-xs uppercase tracking-[0.4em] text-zinc-400 font-black mb-1 md:mb-2">Sunday</p>
                       <div className="relative inline-block px-6 md:px-8 py-1 md:py-2 border-y border-sage/30">
-                        <p className="serif text-5xl md:text-8xl font-medium text-sage leading-none">20</p>
+                        <p className="serif text-5xl md:text-8xl font-medium text-sage leading-none">27</p>
                         <motion.div
                           animate={{ opacity: [0.4, 1, 0.4] }}
                           transition={{ repeat: Infinity, duration: 2 }}
@@ -1240,7 +1158,7 @@ export default function App() {
                           <Sparkles size={12} className="md:w-4 md:h-4" />
                         </motion.div>
                       </div>
-                      <p className="serif text-sm md:text-2xl font-light tracking-[0.2em] mt-2 md:mt-3">APRIL</p>
+                      <p className="serif text-sm md:text-2xl font-light tracking-[0.2em] mt-2 md:mt-3">SEPTEMBER</p>
                     </div>
 
                     <div className="pt-1">
@@ -1256,9 +1174,9 @@ export default function App() {
               back={
                 <>
                   <Heart size={20} className="text-sage mb-2 md:mb-6 mx-auto opacity-70 md:w-8 md:h-8" />
-                  <p className="serif text-[14px] md:text-2xl italic text-sage mb-2 md:mb-4 leading-relaxed">Our wedding date</p>
+                  <p className="serif text-[14px] md:text-2xl italic text-sage mb-2 md:mb-4 leading-relaxed">The Celebration Date</p>
                   <p className="text-[8px] md:text-xs text-stone-400 uppercase tracking-widest leading-loose">
-                    Monday · 20 April 2026
+                    Monday Â· 27 September 2026
                   </p>
                 </>
               }
@@ -1270,7 +1188,7 @@ export default function App() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="w-full h-full col-span-2 lg:col-span-2"
+            className="w-full h-full col-span-1 lg:col-span-1"
           >
             <FlipCard
               containerClassName="w-full h-[380px] md:h-[350px] lg:h-[350px]"
@@ -1286,7 +1204,7 @@ export default function App() {
                     >
                       <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-full border-2 border-sage/20 flex items-center justify-center bg-paper/30 backdrop-blur-md shadow-2xl mx-auto relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-tr from-sage/10 via-transparent to-sage/5 pointer-events-none" />
-                        <span className="script text-6xl sm:text-8xl md:text-[8rem] gold-gradient-text shimmer select-none leading-relaxed px-4">RA</span>
+                        <span className="script text-6xl sm:text-8xl md:text-[8rem] gold-gradient-text shimmer select-none leading-relaxed px-4">EA</span>
                         <div className="absolute inset-4 rounded-full border border-sage/10 pointer-events-none" />
                       </div>
                     </motion.div>
@@ -1300,64 +1218,22 @@ export default function App() {
             />
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.4 }}
-            className="flex w-full h-full col-span-2 sm:col-span-1 items-center justify-center"
-          >
-            <FlipCard
-              containerClassName="w-full h-[220px] md:h-[350px] lg:h-[350px] flex items-center justify-center"
-              rounded="rounded-full"
-              className="w-36 h-36 md:w-56 md:h-56 shadow-2xl"
-              front={
-                <div className="w-full h-full relative group flex flex-col items-center justify-center gold-gradient-bg shimmer border-4 border-white/20 overflow-hidden">
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-                    transition={{ repeat: Infinity, duration: 5 }}
-                    className="absolute w-full h-full bg-gradient-to-tr from-[#A84C2C]/40 via-transparent to-[#C9B99A]/20 blur-xl"
-                  />
-                  <div className="relative z-10 text-paper space-y-2">
-                    <p className="serif italic text-[8px] md:text-sm opacity-80 mb-1">Curious?</p>
-                    <h3 className="serif text-xl md:text-5xl tracking-widest uppercase font-light">FAQS</h3>
-                    <motion.div
-                      animate={{ y: [0, -5, 0] }}
-                      transition={{ repeat: Infinity, duration: 3 }}
-                      className="mx-auto flex justify-center pt-2 md:pt-4"
-                    >
-                      <HelpCircle size={32} />
-                    </motion.div>
-                  </div>
-                  <div className="absolute inset-4 rounded-full border border-white/10 group-hover:border-white/30 transition-colors" />
-                </div>
-              }
-              back={
-                <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-paper">
-                  <HelpCircle size={28} className="text-sage mb-2 opacity-70" />
-                  <p className="text-[10px] text-stone-300 uppercase tracking-widest font-bold mb-2">Parking?</p>
-                  <p className="serif text-xs italic mb-4">Yes, free parking available.</p>
-                  <p className="text-[10px] text-stone-300 uppercase tracking-widest font-bold mb-2">Indoors?</p>
-                  <p className="serif text-xs italic">Partial outdoors.</p>
-                </div>
-              }
-            />
-          </motion.div>
+
 
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="w-full h-full col-span-1 lg:col-span-2"
+            className="w-full h-full col-span-1 md:col-span-2 lg:col-span-1"
           >
             <FlipCard
               containerClassName="w-full h-[220px] md:h-[350px] lg:h-[350px]"
               front={
                 <div className="w-full h-full relative group">
                   <img
-                    src="https://plus.unsplash.com/premium_photo-1661877303180-19a028c21048?q=80&w=1974&auto=format&fit=crop"
-                    alt="Pearl White Palace"
+                    src="https://scontent.fcmb8-1.fna.fbcdn.net/v/t39.30808-6/517032036_122104490162935051_2809179292901872397_n.jpg?stp=dst-jpg_tt6&cstp=mx2048x1153&ctp=s960x960&_nc_cat=107&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeGKWKWj5IYri5CeU__4_w-ALKA_LHCZZW8soD8scJllb8NA3kjOmfYnfLXZxxvjMCl_UKizn79683kK5qM0f45C&_nc_ohc=hZzwzuNlqhYQ7kNvwH2RNXL&_nc_oc=AdqeOmgv2JtbAa0AzmuzJvwlruIJt2WHh-dtPDNrqlvbvcqN2JkfctKXphLVZHFzeM0&_nc_zt=23&_nc_ht=scontent.fcmb8-1.fna&_nc_gid=90ONbG7gx9YyxfvvDi9Gdg&_nc_ss=7a2a8&oh=00_Af-LKb7xQQ8M03Jbu9t89AyLELQHkFEUuTxadnd4MAaPeQ&oe=6A3B28A8"
+                    alt="Kanaayan Banquet Hall"
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
@@ -1368,9 +1244,7 @@ export default function App() {
                       The Location
                     </p>
                     <h3 className="serif text-lg md:text-5xl text-sage leading-tight drop-shadow-sm font-medium">
-                      Pearl White
-                      <br />
-                      Palace
+                      Kanaayan<br />Banquet Hall
                     </h3>
 
                     <motion.button
@@ -1386,18 +1260,16 @@ export default function App() {
 
                   <div className="absolute bottom-3 left-3 md:bottom-10 md:left-10 text-sage flex items-center gap-1.5 md:gap-3 bg-sand/60 backdrop-blur-md px-2 md:px-4 py-1.5 md:py-2 rounded-full border border-white/10 shadow-lg">
                     <MapPin className="text-sage animate-bounce" size={14} />
-                    <p className="serif text-[8px] md:text-sm tracking-[0.2em] font-bold uppercase">Pearl White Palace</p>
+                    <p className="serif text-[8px] md:text-sm tracking-[0.2em] font-bold uppercase">Kanaayan Banquet Hall</p>
                   </div>
                 </div>
               }
               back={
                 <>
                   <MapPin size={24} className="text-sage mb-2 md:mb-6 opacity-70 md:w-9 md:h-9" />
-                  <h4 className="serif text-xl md:text-4xl text-sage mb-1 md:mb-4">Pearl White Palace</h4>
+                  <h4 className="serif text-xl md:text-4xl text-sage mb-1 md:mb-4">Kanaayan Banquet Hall</h4>
                   <p className="text-[8px] md:text-sm text-stone-400 uppercase tracking-widest leading-loose mb-3 md:mb-6">
-                    Pearl White
-                    <br />
-                    Palace
+                    Kanaayan<br />Banquet Hall
                   </p>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -1412,67 +1284,10 @@ export default function App() {
             />
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="w-full h-full col-span-1 lg:col-span-2"
-          >
-            <FlipCard
-              containerClassName="w-full h-[220px] md:h-[350px] lg:h-[350px]"
-              front={
-                <div className="w-full h-full relative group overflow-hidden">
-                  <img
-                    src="/time.png"
-                    alt="Timeline"
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
 
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-4 md:p-8 text-center z-20">
-                    <motion.div initial={{ scale: 0.8, opacity: 0 }} whileHover={{ scale: 1, opacity: 1 }} className="bg-white/10 backdrop-blur-lg p-4 md:p-6 rounded-full border border-white/20">
-                      <Clock size={24} className="text-white md:w-8 md:h-8" />
-                    </motion.div>
-                    <p className="serif text-white text-xl md:text-5xl italic tracking-widest mt-4 md:mt-6 drop-shadow-lg">Event Timeline</p>
-                    <div className="mt-2 md:mt-4 flex gap-1.5 md:gap-2">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-white/50" />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="absolute top-0 bottom-0 left-4 w-px bg-white/20" />
-                  <div className="absolute top-0 bottom-0 left-6 w-px bg-white/10" />
-                  <div className="absolute top-0 bottom-0 right-4 w-px bg-white/20" />
-                  <div className="absolute top-0 bottom-0 right-6 w-px bg-white/10" />
-                </div>
-              }
-              back={
-                <div className="w-full h-full flex flex-col justify-center items-center px-4 md:px-8">
-                  <Clock size={20} className="text-sage mb-2 md:mb-6 opacity-70 md:w-8 md:h-8" />
-                  <h4 className="serif text-xl md:text-3xl gold-gradient-text shimmer mb-3 md:mb-8 font-medium">Timeline</h4>
-
-                  <div className="w-full max-w-sm space-y-3 md:space-y-6 text-left px-2 md:px-0">
-                    <div className="flex items-start gap-1.5 md:gap-4">
-                      <span className="serif text-sage font-bold text-[9px] md:text-base w-10 md:w-20 text-right shrink-0 pt-0.5 md:pt-1">12:30 PM</span>
-                      <div className="w-px h-full bg-sage/30 relative mt-1 md:mt-2 -ml-[1px] md:-ml-2 shrink-0">
-                        <div className="absolute top-0 -left-[2px] md:-left-[3px] w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-sage" />
-                      </div>
-                      <div>
-                        <p className="text-[8px] md:text-xs font-bold uppercase tracking-wider leading-tight">Waleema Ceremony</p>
-                        <p className="serif text-[8px] md:text-xs italic text-stone-400 mt-0.5">Followed by Lunch</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              }
-            />
-          </motion.div>
         </div>
 
-        <WishesSection />
+
 
         <motion.footer
           initial={{ opacity: 0 }}
@@ -1486,7 +1301,7 @@ export default function App() {
             <div className="h-px w-16 bg-current" />
           </div>
           <p className="serif italic text-stone-400 text-xl max-w-lg mx-auto leading-relaxed">
-            "Love is not just something you feel, it's something you do."
+            "Shhh... It's a surprise! Let's keep this celebration a secret from Erajh!"
           </p>
           <p className="serif text-sage/60 text-sm italic">We can't wait to celebrate with you</p>
 
