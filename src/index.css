@@ -117,6 +117,47 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Fancy Invitation Title */
+.fancy-title {
+  animation: textGlow 4s ease-in-out infinite;
+}
+
+@keyframes textGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 10px rgba(212, 175, 55, 0.3),
+      0 0 20px rgba(212, 175, 55, 0.15),
+      0 0 40px rgba(212, 175, 55, 0.08);
+    filter: brightness(1);
+  }
+  50% {
+    text-shadow:
+      0 0 15px rgba(212, 175, 55, 0.5),
+      0 0 30px rgba(212, 175, 55, 0.25),
+      0 0 60px rgba(212, 175, 55, 0.12),
+      0 0 80px rgba(212, 175, 55, 0.06);
+    filter: brightness(1.1);
+  }
+}
+
+.fancy-ornament {
+  animation: ornamentFade 3s ease-in-out infinite;
+}
+
+@keyframes ornamentFade {
+  0%, 100% { opacity: 0.4; transform: scaleX(1); }
+  50% { opacity: 0.7; transform: scaleX(1.05); }
+}
+
+.fancy-sparkle {
+  animation: sparkleFloat 2.5s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% { opacity: 0.5; transform: translateY(0) scale(1); }
+  50% { opacity: 1; transform: translateY(-3px) scale(1.15); }
+}
+
 /* Custom scrollbar for premium feel */
 ::-webkit-scrollbar {
   width: 6px;
