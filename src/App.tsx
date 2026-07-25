@@ -319,14 +319,19 @@ export default function App() {
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.8, delay: 0.5 } }}
-            className="fixed inset-0 z-[100] bg-paper/95 backdrop-blur-md flex items-center justify-center p-6 overflow-hidden"
+            className="fixed inset-0 z-[100] bg-paper flex items-center justify-center p-6 overflow-hidden"
           >
+            {/* Elegant Background Image of Erajh on Envelope */}
+            <div className="absolute top-0 left-0 right-0 h-[55vh] sm:h-[60vh] z-0 pointer-events-none">
+              <img src="/erajh.jpeg" alt="Erajh Background" className="w-full h-full object-cover object-center opacity-25 md:opacity-35 mix-blend-luminosity" />
+              <div className="absolute inset-0 bg-gradient-to-b from-paper/20 via-transparent to-paper" />
+            </div>
             {/* Top text */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 2, delay: 0.5, ease: 'easeOut' }}
-              className="absolute top-12 md:top-24 left-0 right-0 text-center z-10 pointer-events-none px-4"
+              className="absolute top-20 md:top-24 left-0 right-0 text-center z-10 pointer-events-none px-4"
             >
               <div className="flex flex-col items-center gap-2 md:gap-3">
                 {/* Top ornament */}
@@ -347,7 +352,7 @@ export default function App() {
                 </p>
 
                 {/* Name */}
-                <h3 className="serif text-xl sm:text-2xl md:text-4xl gold-gradient-text shimmer font-light tracking-[0.1em] md:tracking-[0.15em] drop-shadow-lg">
+                <h3 className="serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl gold-gradient-text shimmer font-light tracking-[0.1em] md:tracking-[0.15em] drop-shadow-lg whitespace-nowrap">
                   Erajh Alahakoon's
                 </h3>
 
@@ -376,41 +381,7 @@ export default function App() {
               </div>
             </motion.div>
 
-            {/* Bokeh background */}
-            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-              <motion.div
-                animate={{ x: ['-10%', '10%', '-10%'], y: ['-5%', '5%', '-5%'], opacity: [0.6, 0.9, 0.6] }}
-                transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute -top-[30%] -left-[20%] w-[140%] h-[140%] rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.25)_0%,transparent_60%)] blur-3xl"
-              />
-              <motion.div
-                animate={{ x: ['10%', '-10%', '10%'], y: ['5%', '-5%', '5%'], opacity: [0.5, 0.8, 0.5] }}
-                transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute -bottom-[30%] -right-[20%] w-[140%] h-[140%] rounded-full bg-[radial-gradient(circle,rgba(140,109,49,0.2)_0%,transparent_60%)] blur-3xl"
-              />
-              {!skipAnimations &&
-                [...Array(12)].map((_, i) => (
-                  <motion.div
-                    key={`bokeh-${i}`}
-                    className="absolute rounded-full mix-blend-soft-light"
-                    style={{
-                      backgroundColor: i % 2 === 0 ? '#785E1E' : '#F9D99A',
-                      opacity: 0.25,
-                      width: Math.random() * 150 + 100 + 'px',
-                      height: Math.random() * 150 + 100 + 'px',
-                      left: `${Math.random() * 100}%`,
-                      bottom: '-20%',
-                      filter: `blur(${Math.random() * 20 + 30}px)`,
-                    }}
-                    animate={{
-                      y: [0, -1200],
-                      x: [(Math.random() - 0.5) * 400, (Math.random() - 0.5) * 400],
-                      opacity: [0, 0.4, 0],
-                    }}
-                    transition={{ duration: 25 + Math.random() * 35, repeat: Infinity, delay: Math.random() * 20, ease: 'linear' }}
-                  />
-                ))}
-            </div>
+            {/* Bokeh background removed to make background image clearly visible */}
 
             {/* ───── Envelope ───── */}
             <motion.div
@@ -418,7 +389,7 @@ export default function App() {
               style={{ perspective: 1500 }}
               animate={!skipAnimations && !envelopeOpened ? { y: [0, -10, 0] } : {}}
               transition={skipAnimations ? { duration: 0 } : { duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative mt-48 sm:mt-32 md:mt-0 w-full max-w-2xl h-80 md:h-[450px] rounded-[2.25rem] shadow-[0_34px_80px_-22px_rgba(0,0,0,0.55)] flex flex-col items-center justify-center z-10 overflow-hidden"
+              className="relative mt-80 sm:mt-32 md:mt-0 w-full max-w-2xl h-80 md:h-[450px] rounded-[2.25rem] shadow-[0_34px_80px_-22px_rgba(0,0,0,0.55)] flex flex-col items-center justify-center z-10 overflow-hidden"
             >
               {/* Envelope body */}
               <div className="absolute inset-0 bg-gradient-to-br from-taupe via-sage to-taupe/80 shadow-inner" />
@@ -486,7 +457,7 @@ export default function App() {
                       transition={skipAnimations ? { duration: 0 } : { repeat: Infinity, duration: 2, ease: 'easeInOut' }}
                     >
                       <p className="serif text-white/75 tracking-[0.32em] uppercase text-[10px] md:text-xs whitespace-nowrap">
-                        Tap to break seal
+                        Tap to open the invitation
                       </p>
                     </motion.div>
                   </motion.div>
@@ -701,7 +672,7 @@ export default function App() {
                     <div className="flex items-center gap-2 sm:gap-3 text-umber/70 w-full mt-2">
                       <div className="h-px flex-1 bg-sand/45" />
                       <div className="flex flex-col items-center gap-0.5">
-                        <span className="text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.3em] text-sage font-bold">SEPTEMBER · SUNDAY</span>
+                        <span className="text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.3em] text-sage font-bold">SUNDAY · SEPTEMBER</span>
                         <span className="serif text-[28px] sm:text-[32px] md:text-4xl text-white font-medium leading-none">27</span>
                         <span className="text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-sage font-bold">11:30 AM ONWARDS</span>
                       </div>
