@@ -521,10 +521,24 @@ export default function App() {
             <motion.h2
               whileHover={{ scale: 1.05 }}
               style={{ fontFamily: '"Times New Roman", Times, serif' }}
-              className="text-[10vw] sm:text-5xl md:text-[6rem] gold-gradient-text shimmer drop-shadow-lg relative z-10 leading-relaxed px-1 text-center"
+              className="text-[8vw] sm:text-5xl md:text-[6rem] font-bold tracking-wide gold-gradient-text shimmer drop-shadow-2xl relative z-10 leading-relaxed px-1 text-center"
             >
               Erajh Alahakoon
             </motion.h2>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={showContent ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+              transition={{ delay: 1.4, duration: 0.8 }}
+              className="mt-6 md:mt-8 px-4 w-full flex justify-center relative z-20"
+            >
+              <div className="bg-[#C9B99A]/20 border border-[#C9B99A]/50 backdrop-blur-md rounded-2xl px-4 py-3 sm:px-8 sm:py-4 shadow-[0_0_30px_rgba(201,185,154,0.3)]">
+                <p className="text-[10px] sm:text-xs md:text-sm font-bold tracking-[0.15em] sm:tracking-[0.2em] text-white text-center drop-shadow-md leading-relaxed">
+                  <span className="text-[#ffdf73] text-[11px] sm:text-sm md:text-base mr-1 sm:mr-2">SHHH... IT'S A SURPRISE!</span><br className="sm:hidden" />
+                  LET'S KEEP THIS CELEBRATION A SECRET FROM ERAJH!
+                </p>
+              </div>
+            </motion.div>
           </div>
 
           <div className="w-24 md:w-32 h-px bg-gradient-to-r from-transparent via-sage/40 to-transparent mx-auto mt-8" />
