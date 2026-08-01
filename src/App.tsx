@@ -148,7 +148,7 @@ function FlipCard({
 
 /* ───────── RSVP Card ───────── */
 function RSVPCard() {
-  const endpoint = 'https://script.google.com/macros/s/AKfycbwUyj3PlOGPvh2G32TrKRNgjP3YhkfYuVA-swO-Zfm8N2ZFICyNeZh-iueER3uIP0EU_Q/exec';
+  const endpoint = 'https://script.google.com/macros/s/AKfycbzHuB5qVzoPozvLmHFmEYKOULyWBs0M0twvDHgaBtBBm9PKmIlSQK6hJywOVFG8pxSY/exec';
   const [attendance, setAttendance] = useState('yes');
   const [name, setName] = useState('');
   const [submitting, setSubmitting] = useState(false);
