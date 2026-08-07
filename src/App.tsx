@@ -688,7 +688,7 @@ export default function App() {
                       <div className="flex flex-col items-center gap-0.5">
                         <span className="text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.3em] text-sage font-bold">SUNDAY · SEPTEMBER</span>
                         <span className="serif text-[28px] sm:text-[32px] md:text-4xl text-white font-medium leading-none">27</span>
-                        <span className="text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-sage font-bold">11:30 AM ONWARDS</span>
+                        <span className="text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-sage font-bold">11:00 AM ONWARDS</span>
                       </div>
                       <div className="h-px flex-1 bg-sand/45" />
                     </div>
